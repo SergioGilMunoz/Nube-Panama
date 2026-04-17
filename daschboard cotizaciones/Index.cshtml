@@ -1,0 +1,3590 @@
+﻿@*@{
+        ViewBag.Title = "Index";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }*@
+
+
+@{
+    ViewBag.Title = "Dashboard Cotizaciones";
+    ViewBag.pTitle = "Dashboard";
+    // ViewBag.pageTitle = "Crypto";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!--Select2-->
+<!--Select2-->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!--para el editor de texto del envio de correo-->
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<!-- CSS del emoji picker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fg-emoji-picker@1.0.0/dist/fg-emoji-picker.min.css">
+
+<!-- Icons Css -->
+<link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+<!-- App Css-->
+<link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+<!-- custom Css-->
+<link href="~/assets/css/custom.min.css" rel="stylesheet" type="text/css" />
+
+<!--datatable css-->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+<!--datatable responsive css-->
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+
+<!-- glightbox css -->
+<link rel="stylesheet" href="~/assets/libs/glightbox/css/glightbox.min.css">
+
+
+
+<div class="" id="contactList">
+
+
+    <div class="row">
+        <div class="col-xxl-12">
+
+            <div class="">
+                <div class="card-body">
+
+                    <ul class="nav nav-pills animation-nav nav-justified gap-2 mb-3" role="tablist">
+                        <li class="nav-item waves-effect waves-light">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#animation-home" role="tab">
+                                Cotizaciones por Vencer y Vencidas
+                            </a>
+                        </li>
+                        <li class="nav-item waves-effect waves-light">
+                            <a class="nav-link" data-bs-toggle="tab" href="#animation-profile" role="tab">
+                                Cotizaciones creadas por Semana
+                            </a>
+                        </li>
+                        <li class="nav-item waves-effect waves-light">
+                            <a class="nav-link" data-bs-toggle="tab" href="#animation-messages" role="tab">
+                                Cotizaciones Log Envios
+                            </a>
+                        </li>
+                        <li class="nav-item waves-effect waves-light">
+                            <a class="nav-link" data-bs-toggle="tab" href="#animation-settings" role="tab">
+                                Resumen de Cotizaciones Vencidas
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content text-muted">
+                        <div class="tab-pane active" id="animation-home" role="tabpanel">
+
+                            <div class="row">
+                                <div class="col-xxl-3">
+                                    <div class="card card-height-100">
+                                        <div class="card-header alert alert-secondary border-0 d-flex flex-column align-items-center">
+                                            <h5 class="card-title mb-3">Cotizaciones por Vencer y Vencidas</h5>
+                                            <input type="text"
+                                                   class="form-control fechaCotizacionesVencidas flatpickr-input text-center mb-3"
+                                                   id="fechaCotizacionesVencidas"
+                                                   placeholder="Selec. fecha">
+                                            <button class="btn btn-primary" onclick="BuscarCotizacionesVencidas()">Buscar</button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted fs-14 m-2">Result: <span id="total-result-cotizaciones-vencidas"></span></p>
+                                            </div>
+                                            <div class="col-xl-12  col-md-4">
+                                                <label for="clienteBusquedaCotizacionesVencidas" class="form-label">Busqueda de Clientes</label>
+                                                <select class="clienteBusquedaCotizacionesVencidas d-none" id="clienteBusquedaCotizacionesVencidas" name="clienteBusquedaCotizacionesVencidas"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder dash col-12"></span>
+                                                </p>
+                                            </div>
+
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="clienteBusquedaCotizacionesVencidasMultiple" class="form-label">Clientes</label>
+                                                <select class="form-control clienteBusquedaCotizacionesVencidasMultiple d-none" id="clienteBusquedaCotizacionesVencidasMultiple" multiple="multiple"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder dash col-12"></span>
+                                                </p>
+                                            </div>
+                                            @*<div class="col-xl-12 col-md-8">
+                                                <label for="estadoVencidas" class="form-label">Estado</label>
+                                                <select class="form-control estadoVencidas d-none" id="estadoVencidas" ></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder dash col-12"></span>
+                                                </p>
+                                            </div>*@
+                                        </div><!-- end card body -->
+                                    </div><!-- end card -->
+
+
+
+                                </div><!-- end col -->
+
+                                <div class="col-xxl-9 ">
+                                    <div class="card">
+                                        <div class="card-header border-0 p-0">
+                                        </div><!-- end card header -->
+                                        <div class="card-body">
+                                            <div class="table-responsive table-card table-container">
+                                                <table class="table align-middle  no-padding-cells" id="customerTableCotizaciones">
+                                                    <thead class="table-light text-muted">
+                                                        <tr>
+                                                            <th class="text-center d-none">IdCliente</th>
+                                                            <th rowspan="2" class="text-center" style="width:20%">Clientes</th>
+                                                            <th rowspan="2" class="text-center">Progress</th>
+                                                            <th colspan="3" class="text-center">Por Vencer</th>
+                                                            <th rowspan="2" class="text-center">Hoy</th>
+                                                            <th colspan="3" class="text-center">Vencidas</th>
+                                                            <th rowspan="2" class="text-center">Total Cot.</th> <!-- Nueva columna "Total" -->
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center">1-3 días</th>
+                                                            <th class="text-center">4-6 días</th>
+                                                            <th class="text-center">7 días más</th>
+                                                            <th class="text-center">1-3 días</th>
+                                                            <th class="text-center">4-6 días</th>
+                                                            <th class="text-center">7 días más</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                        <!--end tr-->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- end cardbody -->
+                                        <div class="noresultCotizacionesVencidas" style="display: none">
+                                            <div class="text-center">
+                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#8c68cd,secondary:#4788ff" style="width:75px;height:75px"></lord-icon>
+                                                <h5 class="mt-2">Espere...</h5>
+                                            </div>
+                                        </div>
+                                    </div><!-- end card -->
+                                </div><!-- end col -->
+                            </div><!-- end row -->
+
+
+
+
+
+
+                        </div>
+                        <div class="tab-pane" id="animation-profile" role="tabpanel">
+
+
+
+                            <div class="row">
+                                <div class="col-xxl-3">
+                                    <div class="card card-height-100">
+                                        <div class="card-header alert alert-secondary border-0 d-flex flex-column align-items-center">
+                                            <h5 class="card-title mb-3">Cotizaciones creadas por Semana</h5>
+                                            <input type="text" class="form-control fechaCotizacionesSemana flatpickr-input text-center mb-3" id="fechaCotizacionesSemana" placeholder="Selec. fecha">
+                                            <button class="btn btn-primary" onclick="BuscarCotizacionesSemana()">Buscar</button>
+                                        </div>
+
+                                        <div class="card-body">
+
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted fs-14 m-2">Result: <span id="total-result-cotizaciones-semana"></span></p>
+                                            </div>
+
+                                            <div class="col-xl-12  col-md-8">
+                                                <label for="clienteBusquedaCotizacionesSemana" class="form-label">Busqueda de Clientes</label>
+                                                <select class="clienteBusquedaCotizacionesSemana d-none" id="clienteBusquedaCotizacionesSemana" name="clienteBusquedaCotizacionesSemana"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder dash col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="clienteBusquedaCotizacionesSemanaMultiple" class="form-label">Clientes</label>
+                                                <select class="form-control clienteBusquedaCotizacionesSemanaMultiple d-none" id="clienteBusquedaCotizacionesSemanaMultiple" multiple="multiple"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder dash col-12"></span>
+                                                </p>
+                                            </div>
+                                        </div><!-- end card body -->
+                                    </div><!-- end card -->
+                                    <!-- Modal  -->
+                                </div><!-- end col -->
+
+                                <div class="col-xxl-9 ">
+                                    <div class="card">
+                                        <div class="card-header border-0 p-0">
+                                            <!-- aqui no va nada -->
+                                        </div><!-- end card header -->
+                                        <div class="card-body">
+                                            <div class="table-responsive table-card table-container">
+                                                <table class="table align-middle  no-padding-cells" id="customerTableCotizacionesSemana">
+                                                    <thead class="table-light text-muted">
+                                                        <tr>
+                                                            <th class="text-center">Cliente</th>
+                                                            <th class="text-center">Lunes</th>
+                                                            <th class="text-center">Martes</th>
+                                                            <th class="text-center">Miercoles </th>
+                                                            <th class="text-center">Jueves</th>
+                                                            <th class="text-center">Viernes</th>
+                                                            <th class="text-center">Sabado</th>
+                                                            <th class="text-center">Domingo</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                        <!--end tr-->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- end cardbody -->
+
+
+                                        <div class="noresultCotizacionesSemana" style="display: none">
+                                            <div class="text-center">
+
+
+                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#8c68cd,secondary:#4788ff" style="width:75px;height:75px"></lord-icon>
+                                                <h5 class="mt-2">Espere...</h5>
+
+                                            </div>
+                                        </div>
+                                    </div><!-- end card -->
+                                </div><!-- end col -->
+                            </div><!-- end row -->
+
+
+
+
+
+                        </div>
+                        <div class="tab-pane" id="animation-messages" role="tabpanel">
+
+
+                            <div class="row">
+                                <div class="col-xxl-3">
+                                    <div class="card card-height-100">
+                                        <div class="card-header alert alert-secondary border-0 d-flex flex-column align-items-center">
+                                            <h5 class="card-title mb-3">Cotizaciones Log Envios</h5>
+                                            <input type="text" class="form-control fechaCotizacionesLog flatpickr-input text-center mb-3" id="fechaCotizacionesLog" placeholder="Selec. fecha">
+                                            <button class="btn btn-primary" onclick="BuscarCotizacionesLog()">Buscar</button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="flex-grow-1">
+                                                <p class="text-muted fs-14 m-2">Result: <span id="total-result-cotizaciones-log"></span></p>
+                                            </div>
+                                            <div class="col-xl-12  col-md-4">
+                                                <label for="clienteBusquedaCotizacionesLog" class="form-label">Busqueda de Clientes</label>
+                                                <select class="clienteBusquedaCotizacionesLog d-none" id="clienteBusquedaCotizacionesLog" name="clienteBusquedaCotizacionesLog"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder dash col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="clienteBusquedaCotizacionesLogMultiple" class="form-label">Clientes</label>
+                                                <select class="form-control clienteBusquedaCotizacionesLogMultiple d-none" id="clienteBusquedaCotizacionesLogMultiple" multiple="multiple"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder dash col-12"></span>
+                                                </p>
+                                            </div>
+                                        </div><!-- end card body -->
+                                    </div><!-- end card -->
+                                    <!-- Modal  -->
+                                </div><!-- end col -->
+
+
+
+
+                                <div class="col-xxl-9 ">
+                                    <div class="card">
+                                        <div class="card-header border-0 p-0">
+                                            <!-- aqui no va nada -->
+                                        </div><!-- end card header -->
+                                        <div class="card-body">
+                                            <div class="table-responsive table-card table-container">
+                                                <table class="table align-middle  no-padding-cells" id="customerTableCotizacionesLog">
+                                                    <thead class="table-light text-muted">
+                                                        <tr>
+                                                            <th class="text-center" style="width: 300px;">Clientes</th>
+                                                            <th class="text-center" style="width: 300px;">Cotizacion</th>
+                                                            @*<th rowspan="2" class="text-center">Nombre</th>*@
+                                                            <th class="text-center">Inicio Viaje</th>
+                                                            <th class="text-center">Fin Viaje</th>
+                                                            <th class="text-center">Enviado el</th>
+                                                            <th class="text-center">Primer Respuesta</th>
+                                                            <th class="text-center">Enviado el</th>
+                                                            <th class="text-center">Segunda Respuesta</th>
+                                                            <th class="text-center">Correo</th>
+                                                            <th class="text-center">Telefono</th>
+                                                            <th class="text-center">Counter Cliente</th>
+                                                            <th class="text-center">Counter RGE</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                        <!--end tr-->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- end cardbody -->
+                                        <!--end table-->
+                                        <div class="noresultCotizacionesLog" style="display: none">
+                                            <div class="text-center">
+                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#8c68cd,secondary:#4788ff" style="width:75px;height:75px"></lord-icon>
+                                                <h5 class="mt-2">Espere...</h5>
+                                            </div>
+                                        </div>
+                                    </div><!-- end card -->
+                                </div><!-- end col -->
+                            </div><!-- end row -->
+
+
+
+
+
+                        </div>
+                        <div class="tab-pane" id="animation-settings" role="tabpanel">
+
+
+
+                            <div class="row">
+                                <div class="col-xxl-3">
+                                    <div class="card card-height-100">
+                                        <div class="card-header alert alert-secondary border-0 d-flex flex-column align-items-center mb-0">
+                                            <h5 class="card-title mb-3">Resumen de Cotizaciones Vencidas</h5>
+
+                                            <!-- Contenedor para los botones -->
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-soft-primary" onclick="agregaGrafica();">Añadir Gráfica</button>
+                                                <button class="btn btn-primary" onclick="filterData()">Filtrar</button>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="card-body">
+
+                                            <div class="flex-grow-1">
+                                                <div class="col-lg-12">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="flex-grow-1">
+                                                            <p class="text-muted fs-14 m-2">Result: <span id="total-result-Tarifa"></span></p>
+                                                        </div>
+                                                        <div class="flex-shrink-0">
+                                                            <div class="dropdown">
+                                                                <a class="text-muted fs-14 dropdown-toggle" href="#" role="button" id="seleccionarMontos" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Vista
+                                                                </a>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                                    <li><a class="dropdown-item ventaPresentacion" href="#" onclick="setView('Normal')">Normal</a></li>
+                                                                    <li><a class="dropdown-item costoPresentacion" href="#" onclick="setView('Venta Cero')">Venta Cero</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="col-xl-12  col-md-8">
+                                                <label for="clienteBusqueda" class="form-label">Busqueda de Clientes</label>
+                                                <select class="clienteBusqueda d-none" id="clienteBusqueda" name="clienteBusqueda"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="clienteInput" class="form-label">Clientes</label>
+                                                <select class="form-control clienteInput d-none" id="clienteInput" multiple="multiple"></select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="region" class="form-label">Region</label>
+                                                <select class="form-control region d-none" name="region" id="region" multiple="multiple">
+                                                </select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="pais" class="form-label">Pais</label>
+                                                <select class="form-control pais d-none" name="pais" id="pais" multiple="multiple">
+                                                </select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="estado" class="form-label">Estado</label>
+                                                <select class="form-control estado d-none" name="estado" id="estado" multiple="multiple">
+                                                </select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="year" class="form-label">Año</label>
+                                                <select class="form-control d-none" name="year" id="year">
+                                                </select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder col-12"></span>
+                                                </p>
+                                            </div>
+                                            <div class="col-xl-12 col-md-8">
+                                                <label for="grafica" class="form-label">Grafica</label>
+                                                <select class="form-control grafica d-none" name="grafica" id="grafica">
+                                                </select>
+                                                <p class="card-text placeholder-glow">
+                                                    <span class="placeholder col-12"></span>
+                                                </p>
+                                            </div>
+                                        </div><!-- end card body -->
+                                    </div><!-- end card -->
+                                    <!-- Modal  -->
+
+                                </div><!-- end col -->
+
+
+
+
+                                <div class="col-xxl-9 ">
+                                    <div class="card">
+                                        <div class="card-header border-0 p-0">
+                                            <!-- aqui no va nada -->
+                                        </div><!-- end card header -->
+                                        <!-- Container to append the generated charts -->
+                                        <div id="chartContainer" class="row g-4  card-body"></div>
+                                        <div class="card-body">
+                                            <div class="table-responsive table-card table-container">
+                                                <table class="table align-middle  no-padding-cells" id="customerTable">
+                                                    <thead class="table-light text-muted">
+                                                        <tr>
+                                                            <th class="text-center">Region</th>
+                                                            <th class="text-center">Pais</th>
+                                                            <th class="text-center fixed-width">Cliente</th>
+                                                            <th class="text-center">Año</th> <!-- Nueva columna para el año -->
+                                                            <th class="text-center ">Ene</th>
+                                                            <th class="text-center">Feb</th>
+                                                            <th class="text-center">Mar</th>
+                                                            <th class="text-center">Abr</th>
+                                                            <th class="text-center">May</th>
+                                                            <th class="text-center">Jun</th>
+                                                            <th class="text-center">Jul</th>
+                                                            <th class="text-center">Ago</th>
+                                                            <th class="text-center">Sep</th>
+                                                            <th class="text-center">Oct</th>
+                                                            <th class="text-center">Nov</th>
+                                                            <th class="text-center">Dic</th>
+                                                            <th class="text-center">Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="list form-check-all">
+                                                        <!--end tr-->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- end cardbody -->
+                                        <div class="noresult" style="display: none">
+                                            <div class="text-center">
+                                                <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" colors="primary:#8c68cd,secondary:#4788ff" style="width:75px;height:75px"></lord-icon>
+                                                <h5 class="mt-2">Espere...</h5>
+                                            </div>
+                                        </div>
+                                    </div><!-- end card -->
+                                </div><!-- end col -->
+                            </div><!-- end row -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                          
+
+
+
+
+
+
+                        </div>
+                    </div>
+                </div><!-- end card-body -->
+            </div>
+        </div><!--end col-->
+    </div>
+
+
+
+
+
+    <div class="modal fade flip" id="modalCotizacion" tabindex="-1" role="dialog" aria-labelledby="modalCotizacion" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="miModalLabel">Detalle de Cotización</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table id="miModalTable" class="display " style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Id Cotización</th>
+                                <th>Nombre Cotización</th>
+                                <th>Fecha Alta</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Nombre Cliente</th>
+                                <th>Counter Cliente</th>
+                                <th>Dias Vencimiento</th>
+                                <th>Fecha de Viaje</th>
+                                <th>Counter RGE</th>
+                                <th>Fecha Notificacion</th>
+                                <th>Fecha Seguimiento Whassp</th>
+                                <th>Fecha Seguimiento Correo</th>
+                                <th>Estado</th>
+
+                                <th>Mensaje</th> <!-- Nueva columna "Edit" -->
+                                <th>Link Cotizacion</th> <!-- Nueva columna "Edit" -->
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <!-- Espacio para el botón de cerrar -->
+                    <div class="text-right mt-3">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Segundo modal para edición de mensaje -->
+    <div class="modal fade flip" id="editMessageModal" tabindex="-1" role="dialog" aria-labelledby="editMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editMessageModalLabel">Enviar Mensaje</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="card overflow-hidden mb-0">
+                        <div class="card-body bg-marketplace d-flex">
+                            <div class="flex-grow-1">
+                                <h4 class="fs-18 lh-base mb-0">Nombre de la Cotizacion : <br /> <span class="text-success nombreCotizacionMensaje fst-italic"></span> </h4>
+
+                            </div>
+                            <img src="assets/images/bg-d.png" alt="" class="img-fluid">
+                        </div>
+                    </div>
+
+                    <ul class="nav nav-tabs nav-tabs-custom nav-success nav-justified" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="whatsappTab"  data-bs-toggle="tab" href="#chats" role="tab">
+                                Whatsapp
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="correoTab" data-bs-toggle="tab" href="#email" role="tab">
+                                Correo
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content text-muted">
+                        <div class="tab-pane active" id="chats" role="tabpanel">
+
+                            <div class="user-chat w-100 overflow-hidden border">
+
+                                <div class="chat-content d-lg-flex">
+                                    <!-- start chat conversation section -->
+                                    <div class="w-100 overflow-hidden position-relative">
+                                        <!-- conversation user -->
+                                        <div class="position-relative">
+                                            <div class="position-relative" id="users-chat">
+                                                <div class="p-3 user-chat-topbar bg-transparent">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-sm-9 col-8">
+
+                                                            <input class="form-control " id="telefonoChat"   />
+                                                        </div>
+                                                        @*las opcciones de la parte superior*@
+                                                        <div class="col-sm-3 col-4">
+                                                            <ul class="list-inline user-chat-nav text-end mb-0">
+                                                                <li class="list-inline-item m-0">
+                                                                    <div class="dropdown">
+                                                                        <button class="btn btn-ghost-secondary btn-icon" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            <i data-feather="search" class="icon-sm"></i>
+                                                                        </button>
+                                                                        <div class="dropdown-menu p-0 dropdown-menu-end dropdown-menu-lg">
+                                                                            <div class="p-2">
+                                                                                <div class="search-box">
+                                                                                    <input type="text" class="form-control bg-light border-light" placeholder="Buscar aqui..." onkeyup="searchMessages()" id="searchMessage">
+                                                                                    <i class="ri-search-2-line search-icon"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+
+                                                                @*<li class="list-inline-item d-none d-lg-inline-block m-0">
+                                                                        <button type="button" class="btn btn-ghost-secondary btn-icon" data-bs-toggle="offcanvas" data-bs-target="#userProfileCanvasExample" aria-controls="userProfileCanvasExample">
+                                                                            <i data-feather="info" class="icon-sm"></i>
+                                                                        </button>
+                                                                    </li>*@
+
+                                                                <li class="list-inline-item m-0">
+                                                                    <div class="dropdown">
+                                                                        <button class="btn btn-ghost-secondary btn-icon" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                            <i data-feather="more-vertical" class="icon-sm"></i>
+                                                                        </button>
+                                                                        <div class="dropdown-menu dropdown-menu-end">
+
+                                                                            <a class="dropdown-item" href="#" onclick="mensajePredeterminado(1)"><i class="ri-message-3-line align-bottom text-muted me-2"></i> Mensaje Predeterminado</a>
+                                                                            <a class="dropdown-item" href="#" onclick="mensajePredeterminado(2)"><i class="ri-mic-off-line align-bottom text-muted me-2"></i> Enviar Cotizacion</a>
+                                                                            @*<a class="dropdown-item" href="#"><i class="ri-mic-off-line align-bottom text-muted me-2"></i> Muted</a>*@
+                                                                            @*<a class="dropdown-item" href="#"><i class="ri-delete-bin-5-line align-bottom text-muted me-2"></i> Delete</a>*@
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="chat-conversation p-3 p-lg-4 " id="chat-conversation" data-simplebar>
+                                                    <div id="elmLoader">
+                                                        <div class="spinner-border text-primary avatar-sm" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                    <ul class="list-unstyled chat-conversation-list" id="users-conversation">
+                                                    </ul>
+
+                                                </div>
+                                                <div class="alert alert-warning alert-dismissible copyclipboard-alert px-4 fade show " id="copyClipBoard" role="alert">
+                                                    Message copied
+                                                </div>
+                                            </div>
+
+                                            <div class="position-relative" id="channel-chat">
+                                                <div class="p-3 user-chat-topbar">
+
+
+                                                </div>
+                                                <!-- end chat user head -->
+                                                <div class="chat-conversation p-3 p-lg-4" id="chat-conversation" data-simplebar>
+                                                    <ul class="list-unstyled chat-conversation-list" id="channel-conversation">
+                                                    </ul>
+                                                    <!--   end chat-conversation-list -->
+
+                                                </div>
+                                                <div class="alert alert-warning alert-dismissible copyclipboard-alert px-4 fade show " id="copyClipBoardChannel" role="alert">
+                                                    Message copied
+                                                </div>
+                                            </div>
+
+                                            <!-- end chat-conversation -->
+                                            @*seccion donde va el botn y el cuadro de texto para enviar el mensaje*@
+                                            <div class="chat-input-section p-3 p-lg-4 bg-transparent">
+                                                <div id="chatinput-form" enctype="multipart/form-data">
+                                                    <div class="row g-0 align-items-center">
+                                                        <div class="col-auto">
+                                                            <div class="chat-input-links me-2">
+                                                                <div class="links-list-item">
+                                                                    <button type="button" class="btn btn-link text-decoration-none emoji-btn" id="emoji-btn">
+                                                                        <i class="bx bx-smile align-middle"></i>
+                                                                    </button>
+                                                                    <div id="emoji-picker" class="emoji-picker"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col">
+                                                            <div class="chat-input-feedback">
+                                                                Please Enter a Message
+                                                            </div>
+                                                            <input type="text" class="form-control chat-input bg-light border-light" id="chat-input" placeholder="Escribe el mensaje..." autocomplete="off" onkeypress="if(event.key === 'Enter') enviarChat()">
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <div class="chat-input-links ms-2">
+                                                                <div class="links-list-item">
+                                                                    <button type="button" class="btn btn-success chat-send waves-effect waves-light" onclick="enviarChat()">
+                                                                        <i class="ri-send-plane-2-fill align-bottom"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="replyCard">
+                                                <div class="card mb-0 card-bg-fill card-border-effect-none">
+                                                    <div class="card-body py-3">
+                                                        <div class="replymessage-block mb-0 d-flex align-items-start">
+                                                            <div class="flex-grow-1">
+                                                                <h5 class="conversation-name"></h5>
+                                                                <p class="mb-0"></p>
+                                                            </div>
+                                                            <div class="flex-shrink-0">
+                                                                <button type="button" id="close_toggle" class="btn btn-sm btn-link mt-n2 me-n3 fs-18">
+                                                                    <i class="bx bx-x align-middle"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="tab-pane" id="email" role="tabpanel">
+
+
+                            <div class="p-4 d-flex flex-column h-100">
+
+
+                                @*<div class="mx-n4 px-4 email-detail-content-scroll" data-simplebar>*@
+                                <div class="mx-n4 px-4 " data-simplebar>
+                                    <div class="mt-4 mb-3">
+                                        @*<h5 class="fw-bold email-subject-title">Mensajes Enviados</h5>*@
+                                        <h5 class="fw-bold email-subject-title">Mensajes Enviados</h5>
+                                        <div class="card border-info mt-3 noHayCorreos">
+                                            <div class="card-body">
+                                                <div class="alert alert-info text-center mb-0" role="alert">
+                                                    <i class="ri-information-line align-middle me-2"></i>
+                                                    No hay correos Enviados
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="correosGuardados"></div>
+
+                                    <!-- end accordion -->
+                                </div>
+                                <div class="mt-auto">
+                                    <form class="mt-2">
+                                        <div>
+                                            <input id="idUsuario" class="d-none" />
+                                            <input id="nombreUsuario" class="d-none" />
+                                            <input id="rutaImagen" class="d-none" />
+                                            <input id="counterCLiente" class="d-none" />
+                                            <input id="idCotizacionMensaje" class="d-none" />
+                                            <input id="idClienteMensaje" class="d-none" />
+                                            <input id="url" class="d-none" />
+                                            <label for="emailSelect" class="form-label">Destinatarios:</label>
+                                            <!-- Multi-select input for emails -->
+                                            <select id="emailSelect" class="form-control" multiple="multiple"></select>
+
+                                            <label for="exampleFormControlTextarea1" class="form-label mt-2">Mensaje:</label>
+
+                                            @*<textarea class="form-control border-bottom-0 rounded-top rounded-0 border" id="exampleFormControlTextarea1" rows="10" placeholder="Escribir mensaje..."></textarea>*@
+
+
+                                        <div class="row">
+                                            <!-- Editor de texto en la parte superior ocupando toda la fila -->
+                                            <div class="col-12">
+                                                <div id="editor-container" class="text-dark" style="width:100%;height:200px;"></div>
+                                            </div>
+
+                                            <!-- Botón en la parte inferior derecha -->
+                                            <!-- Contenedor para los botones -->
+                                            <div class="col-12 d-flex justify-content-between mt-2">
+                                                <!-- Botón a la izquierda -->
+                                                <button type="button" class="btn btn-sm btn-primary" onclick="mensajePredeterminado(3)" id="enviarBtn1">
+                                                    <i class="ri-link align-bottom"></i> Generar Link
+                                                </button>
+
+                                                <!-- Botón a la derecha -->
+                                                <button type="button" class="btn btn-sm btn-info" onclick="enviarCorreo()" id="enviarBtn2">
+                                                    <i class="ri-send-plane-2-fill align-bottom"></i> Enviar Correo
+                                                </button>
+
+                                                <!-- Botón a la derecha -->
+                                                <button type="button" class="btn btn-sm btn-success" onclick="enviarLink()" id="enviarBtn">
+                                                    <i class="ri-send-plane-2-fill align-bottom"></i> Enviar Link
+                                                </button>
+                                            </div>
+
+
+
+                                        </div>
+
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <style>
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            white-space: nowrap;
+            text-align: center; /* Centrar texto horizontalmente */
+            vertical-align: middle; /* Centrar texto verticalmente */
+
+            color: white !important; /* Color blanco */
+            letter-spacing: 3px; /* Espaciado entre letras */
+            text-transform: uppercase; /* Convertir a mayúsculas */
+        }
+
+        td, th {
+            text-align: center; /* Centrar texto horizontalmente */
+            vertical-align: middle; /* Centrar texto verticalmente */
+        }
+
+        .plomo-claro {
+            background-color: #f5f5f5 !important; /* Color plomo claro */
+        }
+
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /*
+        .apexcharts-legend {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }*/
+
+        .table-container {
+            max-height: 620px; /* Ajusta esta altura según tus necesidades */
+            overflow-y: auto;
+            border: 1px solid #dee2e6; /* Opcional: agrega un borde alrededor del contenedor */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 2; /* Asegura que la cabecera esté siempre por encima de las filas */
+            border-bottom: 1px solid #dee2e6; /* Asegura que el borde inferior de la cabecera se vea bien */
+            padding: 8px; /* Agrega un poco de relleno para que el texto no esté pegado al borde */
+            text-align: left; /* Alinea el texto a la izquierda */
+        }
+
+        tbody td {
+            padding: 8px; /* Agrega un poco de relleno a las celdas */
+            border-bottom: 1px solid #dee2e6; /* Agrega un borde inferior a las filas */
+        }
+
+        .fixed-width {
+            width: 150px !important; /* Ajusta el valor según tus necesidades */
+        }
+
+        .no-padding-cells th,
+        .no-padding-cells td {
+            padding: 5px;
+        }
+
+        .flatpickr-input {
+            width: 230px !important; /* Adjust the width as needed */
+            height: 36px !important; /* Adjust the height as needed */
+        }
+
+        /* Asegúrate de que el emoji picker se muestre por encima de otros elementos */
+        /*.modal {
+            position: relative;
+            z-index: 100 !important;*/ /* Asegúrate de que el modal tenga un z-index alto */
+        /*}*/
+
+        /*.fg-emoji-picker {
+            z-index: 9999 !important;*/ /* Emoji picker debe estar encima del modal */
+        /*}*/
+
+        /* Evitar que el modal corte el picker */
+        /* body.modal-open {
+            overflow: visible !important;
+        }*/
+        #emoji-picker {
+            position: absolute; /* Asegura que se posicione en relación al botón de emoji */
+            z-index: 1060; /* Valor más alto que el del modal */
+            display: none; /* Oculto por defecto */
+        }
+    </style>
+
+
+
+    <!--end col-->
+</div>
+<!--end row-->
+<!--end offcanvas-->
+@*@Html.Partial("~/Views/Shared/_customizer.cshtml")
+
+    @Html.Partial("~/Views/Shared/_vendor_scripts.cshtml")*@
+
+@section scripts{
+    <!-- list.js min js -->
+    <!--<script src="~/assets/libs/list.js/list.min.js"></script>
+    <script src="~/assets/libs/list.pagination.js/list.pagination.min.js"></script>-->
+    <!--crypto-orders init-->
+    <!--<script src="~/assets/js/pages/crypto-orders.init.js"></script>-->
+
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+    <!--datatable js-->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+
+
+
+    <!--Select2-->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- Include SweetAlert CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <!-- glightbox js -->
+    <script src="~/assets/libs/glightbox/js/glightbox.min.js"></script>
+
+    <!-- JavaScript del emoji picker -->
+    @*<script src="https://cdn.jsdelivr.net/npm/fg-emoji-picker@1.0.0/dist/fg-emoji-picker.min.js"></script>*@
+
+    @*<script src="https://cdn.jsdelivr.net/npm/fg-emoji-picker@1.0.1/fgEmojiPicker.min.js"></script>*@
+
+
+    <!-- fgEmojiPicker js -->
+    <script src="~/assets/libs/fg-emoji-picker/fgEmojiPicker.js"></script>
+    <!-- chat init js -->
+    <script src="/assets/js/pages/chat.init.js"></script>
+ 
+
+
+    <!--ckeditor js-->
+    @*<script src="~/assets/libs/@('@')ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>*@
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+
+    <!-- mailbox init -->
+    <script src="~/assets/js/pages/mailbox.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+
+        // Llamar a la función para inicializar Select2 al cargar la página
+        $(document).ready(function () {
+            //  initializeSelect2();
+            //     $('.noresult').show();
+            // Datos('', '', '', '', "2024", "2024", 0, 0, 0)
+            //   Datos('', '', '13,873,879,1251,16', '', "2024", 0)
+            Datos('', '', '', '', "2024", 0)
+
+            inicial()
+
+        });
+
+        function iniciarCombos() {
+
+
+
+
+            // oculta todos los select
+            $('select').hide();
+
+
+            // Initialize Select2
+            $('.region').select2({
+                //   placeholder: 'Selecciona Region',
+                allowClear: true
+            });
+
+            $(".region").val([]).trigger('change');
+
+            $('.pais').select2({
+                //   placeholder: 'Selecciona Pais',
+                allowClear: true
+            });
+            $(".pais").val([]).trigger('change');
+
+
+            $('.clienteInput').select2({
+                //   placeholder: 'Selecciona Region',
+                allowClear: true
+            });
+            $(".clienteInput").val([]).trigger('change');
+
+
+            // Datos para el combo de estado
+            var grafica = [
+                { id: 0, text: 'Pie Chart Cliente' },
+                { id: 1, text: 'Pie Chart Pais' },
+                { id: 2, text: 'Pie Chart Region' },
+                { id: 3, text: 'Area Chart' },
+                //{ id: 4, text: 'Area Chart Pais' },
+                //{ id: 5, text: 'Area Chart Region' },
+
+            ];
+            $('.grafica').select2({
+                //   placeholder: 'Selecciona Region',
+                data: grafica,
+                allowClear: true
+            });
+            $(".grafica").val([]).trigger('change');
+
+
+            // Datos para el combo de estado
+            var stateData = [
+                { id: 0, text: 'Anulado' },
+                { id: 1, text: 'Activo' },
+                //{ id: 2, text: 'Confirmado' },
+                //{ id: 3, text: 'Reconfirmado' },
+                //{ id: 4, text: 'Todos' },
+
+            ];
+
+            // Inicialización de Select2 para el estado
+            $('.estado').select2({
+                data: stateData,
+                //      placeholder: 'Selecciona un estado'
+            });
+            $(".estado").val([]).trigger('change');
+
+            // Datos para el combo de año
+            var yearData = [
+                { id: 2024, text: '2024' }
+
+            ];
+
+            // Inicialización de Select2 para el año
+            $('#year').select2({
+                data: yearData,
+                placeholder: 'Selecciona un año',
+                minimumResultsForSearch: Infinity // Disable search box
+            });
+
+            $('.clienteBusquedaCotizacionesVencidasMultiple').select2({
+                //   placeholder: 'Selecciona Region',
+                allowClear: true
+            });
+            $(".clienteBusquedaCotizacionesVencidasMultiple").val([]).trigger('change');
+
+            $('.clienteBusquedaCotizacionesSemanaMultiple').select2({
+                //   placeholder: 'Selecciona Region',
+                allowClear: true
+            });
+            $(".clienteBusquedaCotizacionesSemanaMultiple").val([]).trigger('change');
+
+            $('.clienteBusquedaCotizacionesLogMultiple').select2({
+                //   placeholder: 'Selecciona Region',
+                allowClear: true
+            });
+            $(".clienteBusquedaCotizacionesLogMultiple").val([]).trigger('change');
+
+            //Initialize flatpickr and update hidden input on date change
+            flatpickr(".fechaCotizacionesVencidas", {
+                mode: "range",
+                dateFormat: "d-m-Y", // Formato de fecha utilizado para la selección interna
+                altFormat: "j M, Y", // Formato de fecha alternativo para la visualización en el campo de entrada
+                altInput: true, // Habilitar la visualización de la fecha en el campo de entrada
+            });
+
+            flatpickr(".fechaCotizacionesSemana", {
+                mode: "range",
+                dateFormat: "d-m-Y", // Formato de fecha utilizado para la selección interna
+                altFormat: "j M, Y", // Formato de fecha alternativo para la visualización en el campo de entrada
+                altInput: true, // Habilitar la visualización de la fecha en el campo de entrada
+            });
+
+            flatpickr(".fechaCotizacionesLog", {
+                mode: "range",
+                dateFormat: "d-m-Y", // Formato de fecha utilizado para la selección interna
+                altFormat: "j M, Y", // Formato de fecha alternativo para la visualización en el campo de entrada
+                altInput: true, // Habilitar la visualización de la fecha en el campo de entrada
+            });
+
+            //   busquedaClientes()
+            // Inicializar Select2 en el campo de correos
+            $('#emailSelect').select2({
+                tags: true,
+                placeholder: "Agregar correos...",
+                tokenSeparators: [',', ' '],
+
+            });
+
+
+            //var stateVencidas = [
+            //    { id: 1, text: 'Cotización' },
+            //    { id: 2, text: 'En Reservación' },
+            //    { id: 3, text: 'Anulado' },
+            //    //{ id: 3, text: 'Reconfirmado' },
+            //    //{ id: 4, text: 'Todos' },
+
+            //];
+
+            //// Inicialización de Select2 para el estado
+            //$('.estadoVencidas').select2({
+            //    data: stateVencidas,
+            //    //      placeholder: 'Selecciona un estado'
+            //});
+            //$(".estadoVencidas").val([]).trigger('change');
+
+         //   const chatInput = document.getElementById("chat-input");
+
+            busquedaClientes('.clienteBusqueda', '#clienteInput')
+
+            busquedaClientes('.clienteBusquedaCotizacionesVencidas', '#clienteBusquedaCotizacionesVencidasMultiple')
+
+            busquedaClientes('.clienteBusquedaCotizacionesSemana', '#clienteBusquedaCotizacionesSemanaMultiple')
+
+            busquedaClientes('.clienteBusquedaCotizacionesLog', '#clienteBusquedaCotizacionesLogMultiple')
+        }
+
+
+        function Datos(region, pais, cliente, estado, year, yearCompara,) {
+
+            $.ajax({
+                url: '/DASHBOARDSTYLE2/Datos', // Cambia '/TuControlador' por la ruta correcta a tu controlador
+                type: 'POST',
+                data: {
+                    Cliente: cliente,
+                    Region: region,
+                    Pais: pais,
+                    Estado: estado,
+                    Periodo1: year,
+                    Periodo2: yearCompara,
+                    //Modo: modo,
+                    //proyeccion: proyeccion
+                },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        const data = JSON.parse(response.data); // Analiza la cadena JSON a un objeto
+                        populateRegions(data)
+                        populateCountries(data)
+                        //  $('select').show();
+                        populateTable(data);
+
+                    } else {
+                        console.error('Error del servidor:', response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al obtener los datos del servidor:', error);
+                }
+            });
+        }
+
+        // CARGA DE INFORMACION EL COMBO REGION
+        function populateRegions(data) {
+            const regionSelect = $('#region');
+            regionSelect.empty();
+
+            // Agregar opción vacía
+            //   regionSelect.append(new Option('Seleccione una región', '', true, true));
+
+            data.forEach(region => {
+                const option = new Option(region.name, region.id, false, false);
+                regionSelect.append(option);
+            });
+
+            regionSelect.trigger('change');
+        }
+
+
+        // CARGA DE INFORMACION EL COMBO PAIS
+        function populateCountries(data) {
+            const countrySelect = $('#pais');
+            countrySelect.empty();
+
+            // Agregar opción vacía
+            //   countrySelect.append(new Option('Seleccione un país', '', true, true));
+
+            data.forEach(region => {
+                region.countries.forEach(country => {
+                    const option = new Option(country.name, country.id, false, false);
+                    countrySelect.append(option);
+                });
+            });
+
+            countrySelect.trigger('change');
+            // se pueden ver  todos los select y desaparece el placehoulder
+
+            $('.placeholder').hide();
+            iniciarCombos()
+
+        }
+
+        // let yearComparaValue = 0;
+        let currentView = 'Normal';
+        //guarda el valor de la selecion Normal o venta cero
+        function setView(view) {
+            currentView = view;
+        }
+
+        // variable  q guarda la informacion filtrada
+        var processedData
+
+        function filterData() {
+            const tableBody = document.querySelector('#customerTable tbody');
+            tableBody.innerHTML = '';
+            // Mostrar la animación de carga
+            $('.noresult').show();
+
+            const cliente = $('#clienteInput').val().join(',');
+            const region = $('#region').val().join(',');
+            const pais = $('#pais').val().join(',');
+            var estado = $('#estado').val().join(',');
+            if (estado.includes('4')) {
+                estado = '';
+            }
+
+            const year = $('#year').val();
+            const yearCompara = $('#yearCompara').val();
+            const modo = $('#modo').val();
+            const tipoFecha = $('#tipoFecha').val();
+            const proyeccion = $('#proyeccion').val();
+
+
+            const dataToSend = JSON.stringify({
+                Cliente: cliente,
+                Region: region,
+                Pais: pais,
+                Estado: estado,
+                Periodo1: year,
+                Periodo2: yearCompara,
+                Modo: modo,
+                tipoFecha: tipoFecha,
+                proyeccion: proyeccion
+            });
+            // Enviar los datos al controlador
+            $.ajax({
+                url: '/DASHBOARDSTYLE2/Datos',
+                type: 'POST',
+                contentType: 'application/json',
+                data: dataToSend,
+                //data: {
+                //    Cliente: cliente,
+                //    Region: region,
+                //    Pais: pais,
+                //    Estado: estado,
+                //    Periodo1: year,
+                //    Periodo2: yearCompara,
+                //    Modo: modo
+                //},
+                success: function (response) {
+
+
+                    if (response.success) {
+                        const data = JSON.parse(response.data); // Analiza la cadena JSON a un objeto
+                        const yearCompara = $('#yearCompara').val();
+                        populateTable(data, currentView, yearCompara, proyeccion)
+                        //populateTable(data);
+
+                        //  processedData = processData(data);
+                        processedData = data;
+
+
+                    } else {
+                        console.error('Error del servidor:', response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error al filtrar los datos:', error);
+                    $('.noresult').hide();
+                }
+            });
+        }
+
+
+
+
+
+
+        const dat1a = {
+            "regions": [
+                {
+                    "id": 1,
+                    "name": "America del Sur",
+                    "countries": [
+                        {
+                            "id": 1,
+                            "name": "Argentina",
+                            "clients": [
+                                { "id": 1, "name": "Cliente 1", "values": { "Enero": 10, "Febrero": 20, "Marzo": 30, "Abril": 40, "Mayo": 50, "Junio": 60, "Julio": 70, "Agosto": 80, "Septiembre": 90, "Octubre": 100, "Noviembre": 110, "Diciembre": 120 } },
+                                { "id": 2, "name": "Cliente 2", "values": { "Enero": 15, "Febrero": 25, "Marzo": 35, "Abril": 45, "Mayo": 55, "Junio": 65, "Julio": 75, "Agosto": 85, "Septiembre": 95, "Octubre": 105, "Noviembre": 115, "Diciembre": 125 } },
+                                { "id": 3, "name": "Cliente 3", "values": { "Enero": 20, "Febrero": 30, "Marzo": 40, "Abril": 50, "Mayo": 60, "Junio": 70, "Julio": 80, "Agosto": 90, "Septiembre": 100, "Octubre": 110, "Noviembre": 120, "Diciembre": 130 } },
+                                { "id": 4, "name": "Cliente 4", "values": { "Enero": 25, "Febrero": 35, "Marzo": 45, "Abril": 55, "Mayo": 65, "Junio": 75, "Julio": 85, "Agosto": 95, "Septiembre": 105, "Octubre": 115, "Noviembre": 125, "Diciembre": 135 } },
+                                { "id": 5, "name": "Cliente 5", "values": { "Enero": 30, "Febrero": 40, "Marzo": 50, "Abril": 60, "Mayo": 70, "Junio": 80, "Julio": 90, "Agosto": 100, "Septiembre": 110, "Octubre": 120, "Noviembre": 130, "Diciembre": 140 } }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "name": "Brasil",
+                            "clients": [
+                                { "id": 1, "name": "Cliente 1", "values": { "Enero": 11, "Febrero": 21, "Marzo": 31, "Abril": 41, "Mayo": 51, "Junio": 61, "Julio": 71, "Agosto": 81, "Septiembre": 91, "Octubre": 101, "Noviembre": 111, "Diciembre": 121 } },
+                                { "id": 2, "name": "Cliente 2", "values": { "Enero": 16, "Febrero": 26, "Marzo": 36, "Abril": 46, "Mayo": 56, "Junio": 66, "Julio": 76, "Agosto": 86, "Septiembre": 96, "Octubre": 106, "Noviembre": 116, "Diciembre": 126 } },
+                                { "id": 3, "name": "Cliente 3", "values": { "Enero": 21, "Febrero": 31, "Marzo": 41, "Abril": 51, "Mayo": 61, "Junio": 71, "Julio": 81, "Agosto": 91, "Septiembre": 101, "Octubre": 111, "Noviembre": 121, "Diciembre": 131 } },
+                                { "id": 4, "name": "Cliente 4", "values": { "Enero": 26, "Febrero": 36, "Marzo": 46, "Abril": 56, "Mayo": 66, "Junio": 76, "Julio": 86, "Agosto": 96, "Septiembre": 106, "Octubre": 116, "Noviembre": 126, "Diciembre": 136 } },
+                                { "id": 5, "name": "Cliente 5", "values": { "Enero": 31, "Febrero": 41, "Marzo": 51, "Abril": 61, "Mayo": 71, "Junio": 81, "Julio": 91, "Agosto": 101, "Septiembre": 111, "Octubre": 121, "Noviembre": 131, "Diciembre": 141 } }
+                            ]
+                        },
+                        // Añadir más países y clientes aquí
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "America del Norte",
+                    "countries": [
+                        {
+                            "id": 1,
+                            "name": "Estados Unidos",
+                            "clients": [
+                                { "id": 1, "name": "Cliente 1", "values": { "Enero": 12, "Febrero": 22, "Marzo": 32, "Abril": 42, "Mayo": 52, "Junio": 62, "Julio": 72, "Agosto": 82, "Septiembre": 92, "Octubre": 102, "Noviembre": 112, "Diciembre": 122 } },
+                                { "id": 2, "name": "Cliente 2", "values": { "Enero": 17, "Febrero": 27, "Marzo": 37, "Abril": 47, "Mayo": 57, "Junio": 67, "Julio": 77, "Agosto": 87, "Septiembre": 97, "Octubre": 107, "Noviembre": 117, "Diciembre": 127 } },
+                                { "id": 3, "name": "Cliente 3", "values": { "Enero": 22, "Febrero": 32, "Marzo": 42, "Abril": 52, "Mayo": 62, "Junio": 72, "Julio": 82, "Agosto": 92, "Septiembre": 102, "Octubre": 112, "Noviembre": 122, "Diciembre": 132 } },
+                                { "id": 4, "name": "Cliente 4", "values": { "Enero": 27, "Febrero": 37, "Marzo": 47, "Abril": 57, "Mayo": 67, "Junio": 77, "Julio": 87, "Agosto": 97, "Septiembre": 107, "Octubre": 117, "Noviembre": 127, "Diciembre": 137 } },
+                                { "id": 5, "name": "Cliente 5", "values": { "Enero": 32, "Febrero": 42, "Marzo": 52, "Abril": 62, "Mayo": 72, "Junio": 82, "Julio": 92, "Agosto": 102, "Septiembre": 112, "Octubre": 122, "Noviembre": 132, "Diciembre": 142 } }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "name": "Canada",
+                            "clients": [
+                                { "id": 1, "name": "Cliente 1", "values": { "Enero": 13, "Febrero": 23, "Marzo": 33, "Abril": 43, "Mayo": 53, "Junio": 63, "Julio": 73, "Agosto": 83, "Septiembre": 93, "Octubre": 103, "Noviembre": 113, "Diciembre": 123 } },
+                                { "id": 2, "name": "Cliente 2", "values": { "Enero": 18, "Febrero": 28, "Marzo": 38, "Abril": 48, "Mayo": 58, "Junio": 68, "Julio": 78, "Agosto": 88, "Septiembre": 98, "Octubre": 108, "Noviembre": 118, "Diciembre": 128 } },
+                                { "id": 3, "name": "Cliente 3", "values": { "Enero": 23, "Febrero": 33, "Marzo": 43, "Abril": 53, "Mayo": 63, "Junio": 73, "Julio": 83, "Agosto": 93, "Septiembre": 103, "Octubre": 113, "Noviembre": 123, "Diciembre": 133 } },
+                                { "id": 4, "name": "Cliente 4", "values": { "Enero": 28, "Febrero": 38, "Marzo": 48, "Abril": 58, "Mayo": 68, "Junio": 78, "Julio": 88, "Agosto": 98, "Septiembre": 108, "Octubre": 118, "Noviembre": 128, "Diciembre": 138 } },
+                                { "id": 5, "name": "Cliente 5", "values": { "Enero": 33, "Febrero": 43, "Marzo": 53, "Abril": 63, "Mayo": 73, "Junio": 83, "Julio": 93, "Agosto": 103, "Septiembre": 113, "Octubre": 123, "Noviembre": 133, "Diciembre": 143 } }
+                            ]
+                        },
+                        // Añadir más países y clientes aquí
+                    ]
+                },
+                // Añadir más regiones aquí
+            ]
+        }
+
+
+
+        const bootstrapColors = [
+            '#007bff', // Primary
+            '#0DB9B1', // Secondary
+            '#28a745', // Success
+            '#dc3545', // Danger
+            '#ffc107', // Warning
+            '#17a2b8', // Info
+            '#6610f2', // Purple
+            '#e83e8c', // Pink
+            '#fd7e14', // Orange
+            '#20c997', // Teal
+        ];
+
+        let colorIndex = 0;
+
+        function getRandomColor() {
+            const color = bootstrapColors[colorIndex];
+            colorIndex = (colorIndex + 1) % bootstrapColors.length; // Loop through colors
+            return color;
+        }
+
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+
+
+
+        function populateTable(data) {
+            const tableBody = document.querySelector('#customerTable tbody');
+            tableBody.innerHTML = '';
+
+            let totalRows = 0;
+
+            data.forEach((region) => {
+                let regionRendered = false;
+                let regionRowSpan = region.countries.reduce((sum, country) => sum + country.clients.length, 0); // Removed +1 for the sum row
+                const regionColor = getRandomColor();
+
+                region.countries.forEach((country) => {
+                    let countryRendered = false;
+                    const countryColor = getRandomColor();
+
+                    country.clients.forEach((client) => {
+                        const row = document.createElement('tr');
+
+                        // Añadir celda de región solo en la primera fila del grupo de región
+                        if (!regionRendered) {
+                            const regionCell = document.createElement('td');
+                            regionCell.textContent = region.name;
+                            regionCell.rowSpan = regionRowSpan;
+                            regionCell.style.backgroundColor = regionColor;
+                            regionCell.classList.add('vertical-text');
+                            row.appendChild(regionCell);
+                            regionRendered = true;
+                        }
+
+                        // Añadir celda de país solo en la primera fila del grupo de país
+                        if (!countryRendered) {
+                            const countryCell = document.createElement('td');
+                            countryCell.textContent = country.name;
+                            countryCell.rowSpan = country.clients.length;
+                            countryCell.style.backgroundColor = countryColor;
+                            countryCell.classList.add('vertical-text');
+                            row.appendChild(countryCell);
+                            countryRendered = true;
+                        }
+
+                        // Añadir celda de cliente y valores mensuales
+                        const values = client.values;
+
+                        const createCell = (value, index) => {
+                            const totalSolicitadas = value?.total_cantidad_solicitadas || 0;
+                            const totalRevisar = value?.total_catindad_a_revisar || 0;
+                            const totalVencidas = value?.total_cantidad_vencidas || 0;
+
+                            // Aplicar la clase 'plomo-claro' si el índice es impar
+                            const className = index % 2 !== 0 ? 'plomo-claro' : '';
+
+                            let cellContent = `<td class="${className}">${totalSolicitadas}<br>${totalRevisar}<br>${totalVencidas}</td>`;
+
+                            return cellContent;
+                        };
+
+                        row.innerHTML += `
+                                                                                    <td width=3rem>${client.name}</td>
+                                                                                    <td>Solicitadas<br>Revision<br>Vencidas</td>
+                                                                                    ${createCell(values["1"], 1)}
+                                                                                    ${createCell(values["2"], 2)}
+                                                                                    ${createCell(values["3"], 3)}
+                                                                                    ${createCell(values["4"], 4)}
+                                                                                    ${createCell(values["5"], 5)}
+                                                                                    ${createCell(values["6"], 6)}
+                                                                                    ${createCell(values["7"], 7)}
+                                                                                    ${createCell(values["8"], 8)}
+                                                                                    ${createCell(values["9"], 9)}
+                                                                                    ${createCell(values["10"], 10)}
+                                                                                    ${createCell(values["11"], 11)}
+                                                                                    ${createCell(values["12"], 12)}
+                                                                                    ${createCell({
+                            total_cantidad_solicitadas: calculateTotal(client.values, 'total_cantidad_solicitadas'),
+                            total_cantidad_a_revisar: calculateTotal(client.values, 'total_cantidad_a_revisar'),
+                            total_cantidad_vencidas: calculateTotal(client.values, 'total_cantidad_vencidas')
+                        }, 13)}  `;
+                        tableBody.appendChild(row);
+                        totalRows++;
+                    });
+                });
+            });
+
+            // Update total result count
+            document.getElementById('total-result-Tarifa').textContent = totalRows;
+            // es el icono se lupa
+            $('.noresult').hide();
+        }
+
+        function calculateTotal(values, key) {
+            return Object.values(values).reduce((sum, value) => sum + (value?.[key] || 0), 0);
+        }
+
+
+
+        function calculateTotal(values, key) {
+            return Object.values(values).reduce((sum, value) => sum + (value?.[key] || 0), 0);
+        }
+
+
+
+        // Evento para cambiar el año a comparar y modo según la proyeccion seleccionada
+        $('.proyeccion').on('change', function () {
+            var selectedValue = $(this).val();
+
+            if (selectedValue == 1) { // Si se selecciona "Con Proyeccion"
+                $('#yearCompara').val(2023).trigger('change'); // Establecer año a 2023
+                $('#modo').val(1).trigger('change'); // Establecer modo a "venta"
+            } else {
+                $('#yearCompara').val(0).trigger('change'); // Restablecer a valor por defecto
+                $('#modo').val(0).trigger('change'); // Restablecer modo a "cantidad"
+            }
+        });
+
+
+
+
+
+        // vista de la grafica
+        function agregaGrafica() {
+            var selectedChart = $('#grafica').val();
+
+            if (!selectedChart) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Selecciona una opción',
+                    text: 'Por favor selecciona tipo de gráfico.'
+                });
+                return;
+            }
+
+            var chartContainer = $('#chartContainer');
+            var chartHTML = `
+                                                                        <div class="col-lg-6 presentacionGrafico" id="chartContainer">
+                                                                        <div class="card" style="position: relative;">
+
+                                                                            <div class="card-header align-items-center d-flex justify-content-between">
+                                                                                <h4 class="card-title mb-0">Gráfico</h4>
+                                                                                <div class="flex-shrink-0">
+                                                                                    <div class="dropdown card-header-dropdown">
+                                                                                        <a class="text-reset dropdown-btn"  data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                                            <span class="text-muted fs-16">
+                                                                                                <i class="mdi mdi-dots-vertical align-middle"></i>
+                                                                                            </span>
+                                                                                        </a>
+                                                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                                                            <a class="dropdown-item"  onclick="setChartSize(this, 'col-lg-6')">50%</a>
+                                                                                            <a class="dropdown-item"  onclick="setChartSize(this, 'col-lg-9')">75%</a>
+                                                                                            <a class="dropdown-item"  onclick="setChartSize(this, 'col-lg-12')">100%</a>
+                                                                                            <a class="dropdown-item"  onclick="removeChart(this)">Cerrar</a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="card-body">
+                                                                                <div id="simple_pie_chart_${chartContainer.children().length}" class="apex-charts"  dir="ltr"></div>
+                                                                            </div>
+                                                                        </div>
+</div>
+                                                                        `;
+
+            chartContainer.append(chartHTML);
+
+            // Procesar los datos según el gráfico seleccionado
+            const processed = processData(processedData, selectedChart);
+
+            // Ajustar según el tipo de gráfico seleccionado
+            let labels, series;
+            if (selectedChart === "1") {
+                labels = processed.flatMap(region => region.totals.map(item => item.country));
+                series = processed.flatMap(region => region.totals.map(item => item.total));
+                renderPieChart(`#simple_pie_chart_${chartContainer.children().length - 1}`, labels, series);
+            } else if (selectedChart === "2") {
+                labels = processed.map(item => item.region);
+                series = processed.map(item => item.total);
+                renderPieChart(`#simple_pie_chart_${chartContainer.children().length - 1}`, labels, series);
+            } else if (selectedChart === "0") {
+                labels = processed.map(item => `${item.client} (${item.country})`);
+                series = processed.map(item => item.total);
+                renderPieChart(`#simple_pie_chart_${chartContainer.children().length - 1}`, labels, series);
+            } else if (selectedChart === "3") {
+                const processed = processAreaChartData(processedData);
+                renderSplineAreaChart(`#simple_pie_chart_${chartContainer.children().length - 1}`, processed);
+            }
+
+
+        }
+
+
+        // aumenta las dimesiones de la grafica
+        function setChartSize(element, sizeClass) {
+            const chartContainer = $(element).closest('.presentacionGrafico');
+            chartContainer.removeClass('col-lg-6 col-lg-9 col-lg-12').addClass(sizeClass);
+        }
+
+
+        // PINTA LA GRAFICA
+        function renderPieChart(selector, labels, series) {
+            var options = {
+                chart: {
+                    type: 'pie',
+                },
+                series: series,
+                labels: labels,
+                colors: colors,
+                legend: {
+                    position: 'right'
+                },
+                dataLabels: {
+                    enabled: true,
+                    dropShadow: {
+                        enabled: false
+                    },
+                    style: {
+                        fontSize: '14px'
+                    },
+                    formatter: function (val, opts) {
+                        const seriesValue = opts.w.config.series[opts.seriesIndex];
+                        return Math.round(val) + '% (' + seriesValue + ')';
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector(selector), options);
+            chart.render();
+        }
+
+
+
+        //colores del pie charts
+        var colors = [
+            '#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#546E7A', '#26a69a', '#D10CE8',
+            '#FF9800', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF5722', '#795548', '#9E9E9E',
+            '#607D8B', '#E91E63', '#3F51B5', '#673AB7', '#2196F3', '#03A9F4', '#00BCD4', '#009688',
+            '#4CAF50', '#FF9F43', '#ff6f91', '#7367f0', '#28c76f', '#ea5455'
+        ];
+
+
+
+
+
+
+
+
+
+
+
+        function renderSplineAreaChart(selector, processed) {
+            const options = {
+                series: [
+                    {
+                        name: 'Total Actual',
+                        data: processed.actualTotals
+                    },
+                    {
+                        name: 'Total Anterior',
+                        data: processed.previousTotals
+                    }
+                ],
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    toolbar: {
+                        show: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth'
+                },
+                colors: colors,
+                xaxis: {
+                    categories: processed.months,
+                    title: {
+                        text: 'Meses'
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    intersect: false,
+                    x: {
+                        formatter: (value) => `${processed.months[value - 1]}`
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector(selector), options);
+            chart.render();
+        }
+
+
+
+        // desaparace el card body de la grafica
+        function removeChart(button) {
+            $(button).closest('.presentacionGrafico').remove();
+        }
+
+        // realiza el proceso de sumas de las regiones paises y clientes para la grafica
+        function processData(processedData, selectedChart) {
+            const data = processedData;
+
+            if (selectedChart === "1") {
+                // Sumar por país
+                const result = data.map(region => {
+                    const totalPerCountry = region.countries.map(country => {
+                        const total = country.clients.reduce((acc, client) => {
+                            return acc + Object.values(client.values).reduce((sum, value) => sum + value.total_periodo_actual, 0);
+                        }, 0);
+
+                        return { country: country.name, total };
+                    });
+
+                    return {
+                        region: region.name,
+                        totals: totalPerCountry
+                    };
+                });
+                return result;
+
+            } else if (selectedChart === "2") {
+                // Sumar por región
+                const result = data.map(region => {
+                    const total = region.countries.reduce((acc, country) => {
+                        return acc + country.clients.reduce((sum, client) => {
+                            return sum + Object.values(client.values).reduce((innerSum, value) => innerSum + value.total_periodo_actual, 0);
+                        }, 0);
+                    }, 0);
+
+                    return {
+                        region: region.name,
+                        total
+                    };
+                });
+                return result;
+
+            } else if (selectedChart === "0") {
+                // Sumar por cliente
+                const clientSums = data.flatMap(region =>
+                    region.countries.flatMap(country =>
+                        country.clients.map(client => {
+                            const total = Object.values(client.values).reduce((sum, value) => sum + value.total_periodo_actual, 0);
+                            return {
+                                region: region.name,
+                                country: country.name,
+                                client: client.name,
+                                total
+                            };
+                        })
+                    )
+                );
+                return clientSums;
+            }
+
+            return []; // Retorna un array vacío si el selector no coincide
+        }
+
+
+        function processAreaChartData(json) {
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            const months = [];
+            const actualTotals = [];
+            const previousTotals = [];
+
+            var data = json[0]; // Asegúrate de tomar el primer objeto del array
+
+            data.countries.forEach(country => {
+                country.clients.forEach(client => {
+                    Object.keys(client.values).forEach(month => {
+                        const monthIndex = parseInt(month) - 1; // Para obtener el índice del mes (0-11)
+
+                        // Asegúrate de que el mes esté en el array
+                        if (!months[monthIndex]) {
+                            months[monthIndex] = monthNames[monthIndex]; // Guardar el nombre del mes
+                        }
+
+                        // Agregar los totales
+                        if (!actualTotals[monthIndex]) {
+                            actualTotals[monthIndex] = 0;
+                        }
+                        actualTotals[monthIndex] += client.values[month].total_periodo_actual;
+
+                        if (!previousTotals[monthIndex]) {
+                            previousTotals[monthIndex] = 0;
+                        }
+                        previousTotals[monthIndex] += client.values[month].total_periodo_anterior;
+                    });
+                });
+            });
+
+            return {
+                months: months,
+                actualTotals: actualTotals,
+                previousTotals: previousTotals
+            };
+        }
+
+
+
+        //para busqueda de clientes
+        function busquedaClientes(a, b) {
+            $(a).select2({
+                //  data: data.nombreHoteles.slice(0, 10),
+                //    dropdownParent: $('#addSeller .modal-body'),
+                ajax: {
+                    url: '/DASHBOARDSTYLE/BuscarClientes',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            term: params.term,
+                            page: params.page
+                        };
+                    },
+                    processResults: function (data, params) {
+                        var formattedData = data.map(function (cliente) {
+                            return {
+                                id: cliente.id,
+                                text: cliente.text,
+                                //  PorcientoServicio: hotel.PorcientoServicio
+                            };
+                        });
+
+                        return {
+                            results: formattedData
+                        };
+                    },
+                    //processResults: function (data, params) {
+                    //    console.log(data); // Imprime los datos en la consola
+                    //    return {
+                    //        results: data
+                    //    };
+                    //},
+
+                },
+                placeholder: 'Buscar Cliente...',
+                minimumInputLength: 1,
+                //  dropdownParent: $('.busqueda') // Asegurarse de que el dropdown se renderice dentro del contenedor adecuado
+                // maximumSelectionLength: 10,
+                // Aquí se agrega el evento selecting para interceptar antes de que se realice la solicitud AJAX
+            }).on('select2:select', function (e) {
+                var data = e.params.data;
+
+                // Agregar el cliente seleccionado al combo múltiple
+                var newOption = new Option(data.text, data.id, false, true);
+                $(b).append(newOption).trigger('change');
+                // Asignar el valor de PorcientoServicio al input de servicio
+
+            });
+        }
+
+
+
+
+
+
+        function BuscarCotizacionesVencidas() {
+
+            // Obtener los valores seleccionados en el select múltiple
+            //  var clientesSeleccionados = $('#clienteBusquedaCotizacionesVencidasMultiple').val();
+            const clientesSeleccionados = $('#clienteBusquedaCotizacionesVencidasMultiple').val().join(',');
+            // Obtener el valor de la fecha seleccionada
+            var fechaSeleccionada = $('#fechaCotizacionesVencidas').val();
+            // Comprobar si hay datos seleccionados antes de enviar
+            if (!fechaSeleccionada) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor, seleccione una fecha para continuar.',
+                    confirmButtonText: 'Entendido',
+                });
+                return;
+            }
+
+            var [periodo1, periodo2] = fechaSeleccionada.split(' al ');
+
+            periodo1 = periodo1.trim();
+            periodo2 = periodo2 ? periodo2.trim() : ''; // Asegúrate de que periodo2 tenga un valor
+
+            // Comprobar si periodo2 está vacío
+            if (!periodo2) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Rango de fechas incompleto',
+                    text: 'Por favor, seleccione un rango de fechas completo (desde y hasta).',
+                    confirmButtonText: 'Entendido',
+                });
+                return;
+            }
+
+            // Limpiar el cuerpo de la tabla
+            const tbody = $('#customerTableCotizaciones tbody');
+            tbody.empty();
+            $('.noresultCotizacionesVencidas').show();
+
+
+            // Enviar los datos al controlador usando AJAX
+            $.ajax({
+                type: 'POST',
+                url: '/DASHBOARDSTYLE2/ClientesBusquedaCotizacionesVencidas',  // Reemplaza con la URL de tu acción en el controlador
+                data: {
+                    cliente: clientesSeleccionados,
+                    periodo1: periodo1,
+                    periodo2: periodo2
+
+                },
+                traditional: true,  // Para enviar datos de array en AJAX
+                success: function (response) {
+
+                    if (response.success) {
+                        renderTablaCotizacionesVencidas(response.data)
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error en la solicitud',
+                            text: 'Hubo un problema en el Servidor. Intente nuevamente.',
+                            confirmButtonText: 'Cerrar',
+                        });
+
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error en la solicitud',
+                        text: 'Hubo un problema al procesar la solicitud. Intente nuevamente.',
+                        confirmButtonText: 'Cerrar',
+                    });
+                    console.error('Error en la solicitud:', error);
+                }
+            });
+        }
+
+
+
+        // Inicialización de DataTable con columnas ocultas
+        //$(document).ready(function () {
+        //    $('#miModalTable').DataTable({
+        //        columnDefs: [
+        //          //  { targets: [9, 10, 11], visible: false },  // Ocultar columnas de Teléfono y Correo
+        //         //   { targets: [12,13], visible: true }       // Mostrar columna con índice 11
+        //        ]
+        //    });
+        //});
+        var datavencidas = [
+            {
+                "id_Cliente": 1,
+                "Cliente": "Empresa A",
+                "fechadesde": "2024-11-01",
+                "fechahasta": "2024-11-30",
+                "C13xvencer": 3,
+                "C46xvencer": 2,
+                "C7xvencer": 1,
+                "Vence_hoy": 1,
+                "C13xvencida": 2,
+                "C46xvencida": 1,
+                "C7xvencida": 2,
+                "progreso": 20,
+                "actual": 1,
+                "total": 5,
+                "colorBarra": "bg-danger"
+            },
+            {
+                "id_Cliente": 2,
+                "Cliente": "Empresa B",
+                "fechadesde": "2024-11-01",
+                "fechahasta": "2024-11-30",
+                "C13xvencer": 4,
+                "C46xvencer": 3,
+                "C7xvencer": 2,
+                "Vence_hoy": 0,
+                "C13xvencida": 2,
+                "C46xvencida": 1,
+                "C7xvencida": 3,
+                "progreso": 70,
+                "actual": 7,
+                "total": 10,
+                "colorBarra": "bg-warning"
+            },
+            {
+                "id_Cliente": 3,
+                "Cliente": "Empresa C",
+                "fechadesde": "2024-11-01",
+                "fechahasta": "2024-11-30",
+                "C13xvencer": 2,
+                "C46xvencer": 2,
+                "C7xvencer": 2,
+                "Vence_hoy": 0,
+                "C13xvencida": 1,
+                "C46xvencida": 1,
+                "C7xvencida": 1,
+                "progreso": 100,
+                "actual": 6,
+                "total": 6,
+                "colorBarra": "bg-success"
+            },
+            {
+                "id_Cliente": 4,
+                "Cliente": "Empresa D",
+                "fechadesde": "2024-11-01",
+                "fechahasta": "2024-11-30",
+                "C13xvencer": 2,
+                "C46xvencer": 1,
+                "C7xvencer": 0,
+                "Vence_hoy": 0,
+                "C13xvencida": 3,
+                "C46xvencida": 0,
+                "C7xvencida": 0,
+                "progreso": 20,
+                "actual": 1,
+                "total": 5,
+                "colorBarra": "bg-danger"
+            },
+            {
+                "id_Cliente": 5,
+                "Cliente": "Empresa E",
+                "fechadesde": "2024-11-01",
+                "fechahasta": "2024-11-30",
+                "C13xvencer": 1,
+                "C46xvencer": 2,
+                "C7xvencer": 3,
+                "Vence_hoy": 0,
+                "C13xvencida": 0,
+                "C46xvencida": 0,
+                "C7xvencida": 0,
+                "progreso": 70,
+                "actual": 7,
+                "total": 10,
+                "colorBarra": "bg-warning"
+            }
+        ]
+
+
+
+      //  renderTablaCotizacionesVencidas(datavencidas)
+
+
+        function renderTablaCotizacionesVencidas(data) {
+            const dataparse = JSON.parse(data);
+            const tbody = $('#customerTableCotizaciones tbody');
+            tbody.empty();
+
+            const cantidadResultados = dataparse.length;
+            $('#total-result-cotizaciones-vencidas').text(`${cantidadResultados}`);
+
+            dataparse.forEach(item => {
+                const total =
+                    (parseInt(item.C13xvencer) || 0) +
+                    (parseInt(item.C46xvencer) || 0) +
+                    (parseInt(item.C7xvencer) || 0) +
+                    (parseInt(item.Vence_hoy) || 0) +
+                    (parseInt(item.C13xvencida) || 0) +
+                    (parseInt(item.C46xvencida) || 0) +
+                    (parseInt(item.C7xvencida) || 0);
+
+                const totalBarraProgrees = (parseInt(item.Vence_hoy) || 0) +
+                    (parseInt(item.C13xvencida) || 0) +
+                    (parseInt(item.C46xvencida) || 0) +
+                    (parseInt(item.C7xvencida) || 0);
+
+
+                //const progreso = Math.round((item.notificados / totalBarraProgrees) * 100);
+                //let colorBarra;
+                //if (progreso <= 20) {
+                //    colorBarra = "bg-danger";
+                //} else if (progreso <= 70) {
+                //    colorBarra = "bg-warning";
+                //} else if (progreso === 100) {
+                //    colorBarra = "bg-success";
+                //}
+
+                const progreso = item.notificados > 0 ? Math.round((totalBarraProgrees / item.notificados) * 100) : 0;
+
+                let colorBarra;
+                let anchoBarra;
+
+                if (progreso === 0) {
+                    colorBarra = "bg-danger"; // Color rojo si progreso es 0.
+                    anchoBarra = 100; // Barra llena al 100%.
+                } else {
+                    anchoBarra = progreso; // Si no es 0, la barra toma el valor real del progreso.
+
+                    if (progreso <= 20) {
+                        colorBarra = "bg-danger";
+                    } else if (progreso <= 70) {
+                        colorBarra = "bg-warning";
+                    } else if (progreso === 100) {
+                        colorBarra = "bg-success";
+                    } else {
+                        colorBarra = "bg-primary"; // Color opcional para valores entre 71 y 99.
+                    }
+                }
+
+
+
+
+
+
+                const progressBarHtml = `
+            <div class="row align-items-center g-2">
+                <div class="col-auto">
+                    <div class="p-1">
+                        <h6 class="mb-0">${item.notificados}</h6>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="p-1">
+                        <div class="progress bg-success-subtle animated-progress progress-sm">
+                            <div class="progress-bar ${colorBarra}" role="progressbar" 
+                                style="width: ${anchoBarra}%;" 
+                                aria-valuenow="${progreso}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <div class="p-1">
+                        <h6 class="mb-0 text-muted">${totalBarraProgrees}</h6>
+                    </div>
+                </div>
+            </div>
+        `;
+
+                const row = $(`
+            <tr>
+                <td class="text-start">
+                    <a href="javascript:void(0)" class="text-primary cell-click" 
+                       data-id="${item.id_Cliente}" 
+                       data-fechadesde="${item.fechadesde}" 
+                       data-fechahasta="${item.fechahasta}">
+                       ${item.Cliente}
+                    </a>
+                </td>
+                <td class="text-start">${progressBarHtml}</td>
+                <td class="text-center table-light">${item.C13xvencer}</td>
+                <td class="text-center">${item.C46xvencer}</td>
+                <td class="text-center table-light">${item.C7xvencer}</td>
+                <td class="text-center">${item.Vence_hoy}</td>
+                <td class="text-center table-light">${item.C13xvencida}</td>
+                <td class="text-center">${item.C46xvencida}</td>
+                <td class="text-center table-light">${item.C7xvencida}</td>
+                <td class="text-center font-weight-bold">${total}</td>
+            </tr>
+        `);
+
+                tbody.append(row);
+            });
+
+            $('.cell-click').on('click', function () {
+                const idCliente = $(this).data('id');
+                const fechaDesde = $(this).data('fechadesde');
+                const fechaHasta = $(this).data('fechahasta');
+
+                $.ajax({
+                    url: '/DASHBOARDSTYLE2/ObtenerDatosVencidasVencerporId',
+                    type: 'POST',
+                    data: { idCliente: idCliente, periodo1: fechaDesde, periodo2: fechaHasta },
+                    success: function (response) {
+                        const nombre = response.rutaImagenNombreId.nombre;
+                        const idUsuario = response.rutaImagenNombreId.id_usuario;
+                        const ruta = response.rutaImagenNombreId.ruta_relativa;
+                        
+
+                        const table = $('#miModalTable').DataTable();
+                        table.clear().draw();
+                        response.data.forEach(item => {
+
+
+                            const fechaAlta = new Date(parseInt(item.fecha_alta?.substr(6) || "0"));
+                            const fechaVencimiento = new Date(parseInt(item.fecha_vencimiento?.substr(6) || "0"));
+                            const fechaViaje = new Date(parseInt(item.fecha_viaje?.substr(6) || "0"));
+
+
+
+
+                            // Verificar si fechaNotificacion existe y es válida
+                            let fechaNotificacionFormateada = "";
+                            if (item.fechaNotificacion) {
+                                const fechaNotificacion = new Date(parseInt(item.fechaNotificacion.substr(6)));
+                                fechaNotificacionFormateada = fechaNotificacion.toLocaleDateString('es-ES', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit'
+                                });
+                            }
+
+                            //let fechaSeguimientoFormateada = "";
+                            //if (item.fechaSeguimiento) {
+                            //    const fechaSeguimiento = new Date(parseInt(item.fechaSeguimiento.substr(6)));
+                            //    fechaSeguimientoFormateada = fechaSeguimiento.toLocaleDateString('es-ES', {
+                            //        year: 'numeric',
+                            //        month: '2-digit',
+                            //        day: '2-digit'
+                            //    });
+                            //}
+                            let fechaSeguimientoFormateada = "";
+                            if (item.fechaSeguimiento) {
+                                // Extraer el timestamp de la cadena
+                                const fechaSeguimiento = new Date(parseInt(item.fechaSeguimiento.substr(6)));
+
+                                // Formatear la fecha y la hora
+                                fechaSeguimientoFormateada = fechaSeguimiento.toLocaleString('es-ES', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+                            }
+
+                            let fechaSeguimientoCorreoFormateada = "";
+                            if (item.fechaSeguimientoCorreo) {
+                                // Extraer el timestamp de la cadena
+                                const fechaSeguimiento = new Date(parseInt(item.fechaSeguimientoCorreo.substr(6)));
+
+                                // Formatear la fecha y la hora
+                                fechaSeguimientoCorreoFormateada = fechaSeguimiento.toLocaleString('es-ES', {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                });
+                            }
+                          //  const fechaNotificacion = new Date(parseInt(item.fechaNotificacion?.substr(6) || "0"));
+
+                            const opcionesFecha = { year: 'numeric', month: '2-digit', day: '2-digit' };
+                            const fechaAltaFormateada = fechaAlta.toLocaleDateString('es-ES', opcionesFecha);
+                            const fechaVencimientoFormateada = fechaVencimiento.toLocaleDateString('es-ES', opcionesFecha);
+                            const fechaViajeFormateada = fechaViaje.toLocaleDateString('es-ES', opcionesFecha);
+                         //   const fechaNotificacionFormateada = fechaNotificacion.toLocaleDateString('es-ES', opcionesFecha);
+
+                            // Verificar si teléfono y correo son null o vacíos
+                            const telefono = item.telefono ? item.telefono : 'No hay teléfono';
+                            const correo = item.correo ? item.correo : 'No hay correo';
+
+                            table.row.add([
+                                item.id_cotizacion,
+                                capitalizeWords(item.nombre_cotizacion),
+                                fechaAltaFormateada,
+                                fechaVencimientoFormateada,
+                              
+                                item.nombre_cliente,
+                                item.counter_cliente,
+                                item.dias_vencimiento,
+                                fechaViajeFormateada,
+                                item.counter_rge, 
+                                fechaNotificacionFormateada || "",
+                                fechaSeguimientoFormateada || "",
+                                fechaSeguimientoCorreoFormateada || "",
+                                /*item.fechaNotificacion,*/
+                                //   telefono,
+                                //  correo,
+                                //  item.idCliente,
+                                obtenerBadgeEstado(item.estado),
+                                `<a href="javascript:void(0)" class="text-primary edit-icon" data-id="${item.id_cotizacion}" onclick="openEditModal('${item.id_cotizacion}', '${item.telefono}', '${item.correo}', '${item.counter_cliente}', '${item.idCliente}', '${nombre}', '${idUsuario}', '${ruta}','${item.nombre_cotizacion}','${item.urldescarga}')"> 
+                                <i class="mdi mdi-email-fast fs-20"></i>
+                                </a>`,
+                                `<a href="${item.urldescarga}" title="${item.urldescarga}" target="_blank">
+                                ${item.urldescarga.substring(0, 20)}...${item.urldescarga.substring(item.urldescarga.length - 20)}
+                                </a>`
+                            ]).draw();
+                        });
+
+                        $('#modalCotizacion').modal('show');
+                    }
+                });
+            });
+
+            $('.noresultCotizacionesVencidas').hide();
+        }
+
+
+
+
+
+
+
+        //function renderTablaCotizacionesVencidas(data) {
+        //    const dataparse = JSON.parse(data);
+        //    const tbody = $('#customerTableCotizaciones tbody');
+        //    tbody.empty();
+
+        //    const cantidadResultados = dataparse.length;
+        //    $('#total-result-cotizaciones-vencidas').text(`${cantidadResultados}`);
+
+        //    dataparse.forEach(item => {
+        //        const total =
+        //            (parseInt(item.C13xvencer) || 0) +
+        //            (parseInt(item.C46xvencer) || 0) +
+        //            (parseInt(item.C7xvencer) || 0) +
+        //            (parseInt(item.Vence_hoy) || 0) +
+        //            (parseInt(item.C13xvencida) || 0) +
+        //            (parseInt(item.C46xvencida) || 0) +
+        //            (parseInt(item.C7xvencida) || 0);
+
+        //        const row = $(`
+        //                                                            <tr>
+        //                                                                <td class="text-start">
+        //                                                                    <a href="javascript:void(0)" class="text-primary cell-click" data-id="${item.id_Cliente}" data-fechadesde="${item.fechadesde}" data-fechahasta="${item.fechahasta}">${item.Cliente}</a>
+        //                                                                </td>
+        //                                                                <td class="text-center table-light">${item.C13xvencer}</td>
+        //                                                                <td class="text-center">${item.C46xvencer}</td>
+        //                                                                <td class="text-center table-light">${item.C7xvencer}</td>
+        //                                                                <td class="text-center">${item.Vence_hoy}</td>
+        //                                                                <td class="text-center table-light">${item.C13xvencida}</td>
+        //                                                                <td class="text-center">${item.C46xvencida}</td>
+        //                                                                <td class="text-center table-light">${item.C7xvencida}</td>
+        //                                                                <td class="text-center font-weight-bold">${total}</td>
+
+        //                                                            </tr>
+        //                                                        `);
+
+        //        tbody.append(row);
+        //    });
+
+        //    $('.cell-click').on('click', function () {
+        //        const idCliente = $(this).data('id');
+        //        const fechaDesde = $(this).data('fechadesde');
+        //        const fechaHasta = $(this).data('fechahasta');
+
+        //        $.ajax({
+        //            url: '/DASHBOARDSTYLE2/ObtenerDatosVencidasVencerporId',
+        //            type: 'POST',
+        //            data: { idCliente: idCliente, periodo1: fechaDesde, periodo2: fechaHasta },
+        //            success: function (response) {
+        //                const nombre = response.rutaImagenNombreId.nombre;
+        //                const idUsuario = response.rutaImagenNombreId.id_usuario;
+        //                const ruta = response.rutaImagenNombreId.ruta_relativa;
+                      
+        //                const table = $('#miModalTable').DataTable();
+        //                table.clear().draw();
+        //                response.data.forEach(item => {
+        //                    const fechaAlta = new Date(parseInt(item.fecha_alta.substr(6)));
+        //                    const fechaVencimiento = new Date(parseInt(item.fecha_vencimiento.substr(6)));
+        //                    const fechaViaje = new Date(parseInt(item.fecha_viaje?.substr(6) || "0"));
+
+        //                    const opcionesFecha = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        //                    const fechaAltaFormateada = fechaAlta.toLocaleDateString('es-ES', opcionesFecha);
+        //                    const fechaVencimientoFormateada = fechaVencimiento.toLocaleDateString('es-ES', opcionesFecha);
+        //                    const fechaViajeFormateada = fechaViaje.toLocaleDateString('es-ES', opcionesFecha);
+
+        //                    // Verificar si teléfono y correo son null o vacíos
+        //                    const telefono = item.telefono ? item.telefono : 'No hay teléfono';
+        //                    const correo = item.correo ? item.correo : 'No hay correo';
+
+        //                    table.row.add([
+        //                        item.id_cotizacion,
+        //                        capitalizeWords(item.nombre_cotizacion),
+        //                        fechaAltaFormateada,
+        //                        fechaVencimientoFormateada,
+        //                        item.nombre_cliente,
+        //                        item.counter_cliente,
+        //                        item.dias_vencimiento,
+        //                        fechaViajeFormateada,
+        //                        item.counter_rge,
+        //                     //   telefono,
+        //                      //  correo,
+        //                      //  item.idCliente,
+        //                        obtenerBadgeEstado(item.estado),
+        //                        `<a href="javascript:void(0)" class="text-primary edit-icon" data-id="${item.id_cotizacion}" onclick="openEditModal('${item.id_cotizacion}', '${item.telefono}', '${item.correo}', '${item.counter_cliente}', '${item.idCliente}', '${nombre}', '${idUsuario}', '${ruta}','${item.nombre_cotizacion}')">
+        //                                                        <i class="mdi mdi-email-fast fs-20"></i>
+        //                                                    </a>`
+        //                    ]).draw();
+        //                });
+
+        //                $('#modalCotizacion').modal('show');
+        //            }
+        //        });
+        //    });
+
+        //    //$('.edit-icon').on('click', function () {
+        //    //    const idCotizacion = $(this).data('id');
+        //    //    $('#messageId').val(idCotizacion);
+        //    //    $('#editMessageModal').modal('show');
+        //    //});
+        //    $('.noresultCotizacionesVencidas').hide();
+        //}
+
+
+        function obtenerBadgeEstado(estado) {
+            let badgeClass = ""; // Clase Bootstrap para el color del badge
+
+            switch (estado) {
+                case "Cotizacion":
+                    badgeClass = "info"; // Color info
+                    break;
+                case "En Reservacion":
+                    badgeClass = "success"; // Color success
+                    break;
+                case "Anulado":
+                    badgeClass = "danger"; // Color rojo
+                    break;
+                default:
+                    badgeClass = "secondary"; // Color gris para estados desconocidos
+            }
+
+            // Retornar el badge como HTML
+            return `<span class="badge bg-${badgeClass}">${estado}</span>`;
+        }
+
+
+
+        // Variable para almacenar el identificador del intervalo
+        let serializedInterval;
+
+        function openEditModal(idCotizacion, telefono, correo, counterCliente, idCliente, nombre, idusuario, ruta, nombreCotizacion,url) {
+
+            // Selecciona el contenedor
+            var chatConversationList = document.getElementById("users-conversation");
+
+            // se borra el contenedor de dodne estan la lista de correos enviados
+            document.querySelector('.correosGuardados').innerHTML = '';
+            // Borra el contenido actual del contenedor
+            chatConversationList.innerHTML = '';
+
+            // Asigna el valor al campo de idCotizacion
+            $('#idUsuario').text(idusuario);
+            $('#nombreUsuario').text(nombre);
+            $('#rutaImagen').text(ruta);
+
+            $('#idCotizacionMensaje').text(idCotizacion);
+            $('#counterCLiente').text(counterCliente);
+            $('#idClienteMensaje').text(idCliente);
+
+            $('#url').text(url);
+
+            var nombreCotizacionCapitalizada = capitalizeWords(nombreCotizacion);
+            $('.nombreCotizacionMensaje').text(nombreCotizacionCapitalizada);
+
+            // Asigna el valor al campo de teléfono, o muestra un mensaje si no se encuentra.
+            const telefonoChat = document.getElementById("telefonoChat");
+            telefonoChat.value = telefono && telefono.trim() ? telefono : "no se encontró teléfono";
+            actualizarTabs()
+
+
+            // Obtén el elemento del select para el correo
+            const emailSelect = $('#emailSelect');
+            // Limpia cualquier opción previa en el select usando Select2
+            emailSelect.empty();
+
+            // Agrega el correo al select
+            if (correo) {
+                const option = new Option(correo, correo, true, true); // 'true' selecciona el valor automáticamente
+                emailSelect.append(option);
+            } else {
+                const option = new Option("no se encontró correo", "no_se_encontro_correo", true, true);
+                emailSelect.append(option);
+            }
+
+            // Actualiza Select2 para reflejar los cambios
+            emailSelect.trigger('change');
+            // borra el contenedor de la mensajeria de correo
+            quill.setContents([]);
+
+            $.ajax({
+                url: '/DASHBOARDSTYLE2/ObtenerConversacion',
+                type: 'POST',
+                data: { idCotizacion: idCotizacion },
+                success: function (response) {
+                    const conversaciones = response.jsonConversaciones;
+                    if (conversaciones) {
+                        getChatMessages(conversaciones); // Llama a la función por primera vez
+                        fetchSerializedMessages();
+                    }
+
+                    const correos = response.data;
+                    if (correos) {
+                        $('.noHayCorreos').hide();
+                        renderCorreoCotizaciones(correos)
+                    } else { $('.noHayCorreos').show(); }
+                    
+                }
+            });
+
+            // Muestra el modal
+            $('#editMessageModal').modal('show');
+
+            // Función para obtener el serialized cíclicamente
+            function fetchSerializedMessages() {
+                $.ajax({
+                    url: '/DASHBOARDSTYLE2/ObetnerSerializedMaytapi',
+                    type: 'POST',
+                    data: { idCotizacion: idCotizacion },
+                    success: function (response) {
+                        const conversaciones = response.jsonConversaciones;
+                        if (conversaciones) { getChatMessages(conversaciones); }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error al obtener mensajes:", error);
+                    }
+                });
+            }
+
+            
+
+            // Configura un intervalo para llamar a la función cada 60 segundos
+            serializedInterval = setInterval(fetchSerializedMessages, 3000);
+
+            // Detener el intervalo al cerrar el modal
+            $('#editMessageModal').on('hidden.bs.modal', function () {
+                if (serializedInterval) {
+                    clearInterval(serializedInterval);
+                    serializedInterval = null; // Reinicia la variable para evitar conflictos
+                }
+            });
+        }
+
+
+
+
+        function actualizarTabs() {
+            const telefonoChat = document.getElementById("telefonoChat");
+            const whatsappTab = document.getElementById("whatsappTab");
+            const correoTab = document.getElementById("correoTab");
+
+            if (!telefonoChat.value.trim() || telefonoChat.value === "no se encontró teléfono") {
+                // Deshabilitar WhatsApp y activar correo
+                whatsappTab.classList.add("disabled");
+                whatsappTab.removeAttribute("data-bs-toggle");
+                correoTab.click(); // Activa la pestaña de correo automáticamente
+            } else {
+                // Habilitar WhatsApp
+                whatsappTab.classList.remove("disabled");
+                whatsappTab.setAttribute("data-bs-toggle", "tab");
+            }
+        }
+
+
+
+
+
+
+
+
+        //function openEditModal(idCotizacion, telefono, correo, counterCliente, idCliente, nombre, idusuario, ruta,nombreCotizacion) {
+
+        //    // Selecciona el contenedor
+        //    var chatConversationList = document.getElementById("users-conversation");
+
+        //    // Borra el contenido actual del contenedor
+        //    chatConversationList.innerHTML = '';
+
+         
+            
+        //    //getChatMessages(ejemplo)
+        //    // Asigna el valor al campo de idCotizacion
+        //    $('#idUsuario').text(idusuario);
+        //    $('#nombreUsuario').text(nombre);
+        //    $('#rutaImagen').text(ruta);
+
+        //    $('#idCotizacionMensaje').text(idCotizacion);
+        //    $('#counterCLiente').text(counterCliente);
+        //    $('#idClienteMensaje').text(idCliente);
+
+        //    var nombreCotizacionCapitalizada = capitalizeWords(nombreCotizacion);
+        //    $('.nombreCotizacionMensaje').text(nombreCotizacionCapitalizada);
+
+        //    // Asigna el valor al campo de teléfono, o muestra un mensaje si no se encuentra.
+        //    //const telefonoChat = document.getElementById("telefonoChat");
+        //    //telefonoChat.value = telefono ? telefono : "no se encontró teléfono";
+        //    const telefonoChat = document.getElementById("telefonoChat");
+        //    telefonoChat.value = telefono && telefono.trim() ? telefono : "no se encontró teléfono";
+
+
+        //    // Obtén el elemento del select para el correo
+        //    const emailSelect = $('#emailSelect');
+        //    // Limpia cualquier opción previa en el select usando Select2
+        //    emailSelect.empty();
+
+        //    // Agrega el correo al select
+        //    if (correo) {
+        //        // Si hay correo, agregarlo como opción en el select
+        //        const option = new Option(correo, correo, true, true); // 'true' selecciona el valor automáticamente
+        //        emailSelect.append(option);
+        //    } else {
+        //        // Si no hay correo, agregar una opción con el mensaje de error
+        //        const option = new Option("no se encontró correo", "no_se_encontro_correo", true, true);
+        //        emailSelect.append(option);
+        //    }
+
+        //    // Actualiza Select2 para reflejar los cambios
+        //    emailSelect.trigger('change');
+
+        //  //  const nombre;
+
+        //    $.ajax({
+        //        url: '/DASHBOARDSTYLE2/ObtenerConversacion',
+        //        type: 'POST',
+        //        data: { idCotizacion: idCotizacion },
+        //        success: function (response) {
+        //            const conversaciones = response.jsonConversaciones;
+                 
+        //            if (conversaciones) { getChatMessages(conversaciones); }
+        //        }
+        //    });
+
+        //    // Muestra el modal
+        //    $('#editMessageModal').modal('show');
+
+
+        //    $.ajax({
+        //        url: '/DASHBOARDSTYLE2/ObetnerSerializedMaytapi',
+        //        type: 'POST',
+        //        data: { idCotizacion: idCotizacion },
+        //        success: function (response) {
+        //            const conversaciones = response.jsonConversaciones;
+
+        //            if (conversaciones) { getChatMessages(conversaciones); }
+        //        }
+        //    });
+           
+        //}
+
+
+
+        function capitalizeWords(str) {
+            return str.toLowerCase().replace(/\b\w/g, function (char) {
+                return char.toUpperCase();
+            });
+        }
+
+        function mensajePredeterminado(a) {
+
+            if (a == 1) {
+                var idCotizacion = $('#idCotizacionMensaje').text();
+                var counterCliente = $('#counterCLiente').text();
+                // Crear el mensaje personalizado con formato
+                var mensaje = `<b>Estimado Cliente:</b> <i>${counterCliente}</i>, dándole seguimiento a la cotización <b>#${idCotizacion}</b>, por favor informar si esta vigente o si se le da de baja de nuestro sistema.`;
+                document.getElementById("chat-input").value = mensaje
+                // Simular el clic en el botón de enviar
+                $('.chat-send').trigger('click');
+            } else if (a == 2) {
+                var url = $('#url').text();
+                document.getElementById("chat-input").value = url
+                // Simular el clic en el botón de enviar
+                $('.chat-send').trigger('click');
+            } else if (a == 3) {
+                var url = $('#url').text();
+                var counterCliente = $('#counterCLiente').text(); // Obtener el cliente
+                var mensajeExtra = `Para brindarle el mejor servicio, deseamos darle seguimiento a la siguiente cotización que mantenemos en sistema. Se le agradece Mantener la cotización o anular la misma si el cliente ha desistido.`;
+                var mensajeDescarga = "Para poder descargar la Cotización, darle clic al siguiente link:";
+
+                // Insertar el mensaje adicional primero con "Estimado Cliente: <i>nombre</i>"
+                quill.insertText(0, "Estimado Cliente: ", { bold: true });
+                quill.insertText(quill.getLength(), `${counterCliente}\n\n`, { italic: true });
+
+                // Insertar el resto del mensaje
+                quill.insertText(quill.getLength(), mensajeExtra + "\n\n");
+
+                // Insertar el mensaje de descarga después
+                quill.insertText(quill.getLength(), mensajeDescarga + "\n", { bold: true });
+
+                // Insertar la URL con un enlace al final
+                quill.insertText(quill.getLength(), url + "\n", { link: url });
+
+             
+                //var url = $('#url').text();
+                //var mensajeExtra = "Estimado Cliente: Para brindarle el mejor servicio, deseamos darle seguimiento a la siguiente cotización que mantenemos en sistema. Se le agradece Mantener la cotización o anular la misma si el cliente ha desistido.";
+
+                //// Insertar la URL en el editor con un enlace
+                //quill.insertText(0, url, { link: url });
+
+                //// Insertar el mensaje adicional después de la URL
+                //quill.insertText(quill.getLength(), "\n\n" + mensajeExtra);
+            }
+            //else if (a == 3) {
+            //    var url = $('#url').text();
+            //    // Colocar el contenido en el contenedor
+            //    // Insertar la URL en el editor
+            //    quill.insertText(0, url, { link: url });
+
+            //}
+           
+        }
+
+
+
+        function BuscarCotizacionesSemana() {
+
+            // Obtener los valores seleccionados en el select múltiple
+            //  var clientesSeleccionados = $('#clienteBusquedaCotizacionesVencidasMultiple').val();
+            const clientesSeleccionados = $('#clienteBusquedaCotizacionesSemanaMultiple').val().join(',');
+            // Obtener el valor de la fecha seleccionada
+            var fechaSeleccionada = $('#fechaCotizacionesSemana').val();
+            if (!fechaSeleccionada) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor, seleccione una fecha para continuar.',
+                    confirmButtonText: 'Entendido',
+                });
+                return;
+            }
+
+            var [periodo1, periodo2] = fechaSeleccionada.split(' al ');
+
+            periodo1 = periodo1.trim();
+            periodo2 = periodo2 ? periodo2.trim() : ''; // Asegúrate de que periodo2 tenga un valor
+
+            // Comprobar si periodo2 está vacío
+            if (!periodo2) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Rango de fechas incompleto',
+                    text: 'Por favor, seleccione un rango de fechas completo (desde y hasta).',
+                    confirmButtonText: 'Entendido',
+                });
+                return;
+            }
+
+
+            // Limpiar el cuerpo de la tabla
+            const tbody = $('#customerTableCotizacionesSemana tbody');
+            tbody.empty();
+            $('.noresultCotizacionesSemana').show();
+
+            // Enviar los datos al controlador usando AJAX
+            $.ajax({
+                type: 'POST',
+                url: '/DASHBOARDSTYLE2/ClientesBusquedaCotizacionesSemana',  // Reemplaza con la URL de tu acción en el controlador
+                data: {
+                    cliente: clientesSeleccionados,
+                    periodo1: periodo1,
+                    periodo2: periodo2
+
+                },
+                traditional: true,  // Para enviar datos de array en AJAX
+                success: function (response) {
+
+                    if (response.success) {
+                        renderTablaCotizacionesSemana(response.data)
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error en la solicitud',
+                            text: 'Hubo un problema en el Servidor. Intente nuevamente.',
+                            confirmButtonText: 'Cerrar',
+                        });
+
+                    }
+
+
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error en la solicitud',
+                        text: 'Hubo un problema al procesar la solicitud. Intente nuevamente.',
+                        confirmButtonText: 'Cerrar',
+                    });
+                    console.error('Error en la solicitud:', error);
+                }
+            });
+        }
+
+
+
+        function renderTablaCotizacionesSemana(data) {
+            dataparse = JSON.parse(data)
+            // Limpiar el cuerpo de la tabla
+            const tbody = $('#customerTableCotizacionesSemana tbody');
+            tbody.empty();
+
+            const cantidadResultados = dataparse.length;
+            $('#total-result-cotizaciones-semana').text(`${cantidadResultados}`); // Mostrar el número de resultados
+
+            // Iterar sobre cada objeto en el JSON para llenar la tabla
+            dataparse.forEach(item => {
+                const row = `
+                                                                                    <tr>
+                                                                                        <td class="text-start">
+                                                                                        <a href="javascript:void(0)" class="text-primary cell-click2" data-id="${item.id_cliente}" data-fechadesde="${item.fecha_desde}" data-fechahasta="${item.fecha_hasta}" >${item.Cliente} (${item.Pais})</a>
+                                                                                        </td>
+
+                                                                                        <td class="text-center table-light">${item.Lunes}</td>
+                                                                                        <td class="text-center">${item.Martes}</td>
+                                                                                        <td class="text-center table-light">${item.Miercoles}</td>
+                                                                                        <td class="text-center">${item.Jueves}</td>
+                                                                                        <td class="text-center table-light">${item.Viernes}</td>
+                                                                                        <td class="text-center">${item.Sabado}</td>
+                                                                                        <td class="text-center table-light">${item.Domingo}</td>
+                                                                                    </tr>
+                                                                                `;
+                tbody.append(row);
+            });
+
+            // Manejar el evento de clic en las celdas especificadas
+            $('.cell-click2').on('click', function () {
+                const idCliente = $(this).data('id');
+                const fechaDesde = $(this).data('fechadesde');
+                const fechaHasta = $(this).data('fechahasta');
+               // const column = $(this).data('column');
+
+                // Realizar la solicitud AJAX para obtener los datos del cliente
+                $.ajax({
+                    url: '/DASHBOARDSTYLE2/ObtenerDatosVencidasVencerporId',
+                    type: 'POST',
+                    data: { idCliente: idCliente, periodo1: fechaDesde, periodo2: fechaHasta},
+                    success: function (response) {
+                        const nombre = response.rutaImagenNombreId.nombre;
+                        const idUsuario = response.rutaImagenNombreId.id_usuario;
+                        const ruta = response.rutaImagenNombreId.ruta_relativa;
+                        // Limpiar el datatable anterior del modal y llenarlo con nuevos datos
+                        const table = $('#miModalTable').DataTable();
+                        table.clear().draw();
+
+                        // Agregar los nuevos datos al datatable
+                        response.data.forEach(item => {
+
+                            // Convertir las fechas de formato /Date(...)/
+                            const fechaAlta = new Date(parseInt(item.fecha_alta.substr(6)));
+                            const fechaVencimiento = new Date(parseInt(item.fecha_vencimiento.substr(6)));
+                            //  if (item.fecha_viaje != null) { const fechaViaje = new Date(parseInt(item.fecha_viaje.substr(6))); }
+                            const fechaViaje = new Date(parseInt(item.fecha_viaje.substr(6)));
+
+                            // Formatear las fechas (por ejemplo, en formato 'DD/MM/YYYY')
+                            const opcionesFecha = { year: 'numeric', month: '2-digit', day: '2-digit' };
+                            const fechaAltaFormateada = fechaAlta.toLocaleDateString('es-ES', opcionesFecha);
+                            const fechaVencimientoFormateada = fechaVencimiento.toLocaleDateString('es-ES', opcionesFecha);
+                            const fechaViajeFormateada = fechaViaje.toLocaleDateString('es-ES', opcionesFecha);
+
+                            //const nombreCotizacionCapitalizada = capitalizeWords(nombre_cotizacion)
+
+
+                            table.row.add([
+                                item.id_cotizacion,
+                                capitalizeWords(item.nombre_cotizacion),
+                                fechaAltaFormateada,
+                                fechaVencimientoFormateada,
+                                item.nombre_cliente,
+                                item.counter_cliente,
+                                item.dias_vencimiento,
+                                fechaViajeFormateada,
+                                item.counter_rge,
+                                '', // Teléfono vacío
+                                '',
+                                '',
+                                `<a href="javascript:void(0)" class="text-primary edit-icon" data-id="${item.id_cotizacion}" onclick="openEditModal('${item.id_cotizacion}', '${item.telefono}', '${item.correo}', '${item.counter_cliente}', '${item.idCliente}', '${nombre}', '${idUsuario}', '${ruta}', '${item.nombre_cotizacion}')">
+                                 <i class="mdi mdi-email-fast fs-20"></i>
+                             </a>`
+                            ]).draw();
+                        });
+
+                        // Mostrar el modal
+                        $('#modalCotizacion').modal('show');
+                    },
+                    error: function () {
+                        alert('Error al obtener los datos del cliente.');
+                    }
+                });
+            });
+
+
+
+
+
+            $('.noresultCotizacionesSemana').hide();
+        }
+
+
+
+
+        function BuscarCotizacionesLog() {
+
+            // Obtener los valores seleccionados en el select múltiple
+            //  var clientesSeleccionados = $('#clienteBusquedaCotizacionesVencidasMultiple').val();
+            const clientesSeleccionados = $('#clienteBusquedaCotizacionesLogMultiple').val().join(',');
+            // Obtener el valor de la fecha seleccionada
+            var fechaSeleccionada = $('#fechaCotizacionesLog').val();
+            // Comprobar si hay datos seleccionados antes de enviar
+            if (!fechaSeleccionada) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor, seleccione una fecha para continuar.',
+                    confirmButtonText: 'Entendido',
+                });
+                return;
+            }
+            var [periodo1, periodo2] = fechaSeleccionada.split(' al ');
+
+            periodo1 = periodo1.trim();
+            periodo2 = periodo2 ? periodo2.trim() : ''; // Asegúrate de que periodo2 tenga un valor
+
+            // Comprobar si periodo2 está vacío
+            if (!periodo2) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Rango de fechas incompleto',
+                    text: 'Por favor, seleccione un rango de fechas completo (desde y hasta).',
+                    confirmButtonText: 'Entendido',
+                });
+                return;
+            }
+
+            const tbody = $('#customerTableCotizacionesLog tbody');
+            tbody.empty();
+            $('.noresultCotizacionesLog').show();
+
+            // Enviar los datos al controlador usando AJAX
+            $.ajax({
+                type: 'POST',
+                url: '/DASHBOARDSTYLE2/ClientesBusquedaCotizacionesLog',  // Reemplaza con la URL de tu acción en el controlador
+                data: {
+                    cliente: clientesSeleccionados,
+                    periodo1: periodo1,
+                    periodo2: periodo2
+
+                },
+                traditional: true,  // Para enviar datos de array en AJAX
+                success: function (response) {
+
+
+                    if (response.success) {
+                        renderTablaCotizacionesLog(response.data)
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error en la solicitud',
+                            text: 'Hubo un problema en el Servidor. Intente nuevamente.',
+                            confirmButtonText: 'Cerrar',
+                        });
+
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error en la solicitud',
+                        text: 'Hubo un problema al procesar la solicitud. Intente nuevamente.',
+                        confirmButtonText: 'Cerrar',
+                    });
+                    console.error('Error en la solicitud:', error);
+                }
+            });
+        }
+
+
+
+        function renderTablaCotizacionesLog(data) {
+            dataparse = JSON.parse(data)
+            // Limpiar el cuerpo de la tabla
+            const tbody = $('#customerTableCotizacionesLog tbody');
+            tbody.empty();
+            // Meses en formato abreviado
+            const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+            const cantidadResultados = dataparse.length;
+            $('#total-result-cotizaciones-log').text(`${cantidadResultados}`); // Mostrar el número de resultados
+
+
+            // Iterar sobre cada objeto en el JSON para llenar la tabla
+            dataparse.forEach(item => {
+
+                const inicioDate = new Date(item.inicioViaje);
+                const formattedInicioDate = `${inicioDate.getDate()} ${monthNames[inicioDate.getMonth()]} ${inicioDate.getFullYear()}`;
+
+                const finDate = new Date(item.finViaje);
+                const formattedFinDate = `${finDate.getDate()} ${monthNames[finDate.getMonth()]} ${finDate.getFullYear()}`;
+
+                const notificacion1Date = new Date(item.fechaNotificacion1);
+                const formattednotificacion1Date = `${notificacion1Date.getDate()} ${monthNames[notificacion1Date.getMonth()]} ${notificacion1Date.getFullYear()}`;
+
+                const notificacion2Date = new Date(item.fechaNotificacion2);
+                const formattednotificacion2Date = `${notificacion2Date.getDate()} ${monthNames[notificacion2Date.getMonth()]} ${notificacion2Date.getFullYear()}`;
+
+
+
+                const row = `
+                                                                                    <tr>
+                                                                                        <td class="text-start table-light">${item.Cliente}</td>
+                                                                                        <td class="text-start ">${item.nombreCotizacion}</td>
+                                                                                        <td class="text-center table-light">${formattedInicioDate}</td>
+                                                                                        <td class="text-center ">${formattedFinDate}</td>
+                                                                                        <td class="text-center table-light">${formattednotificacion1Date}</td>
+                                                                                        <td class="text-center ">${item.respuestaNotificacion1}</td>
+                                                                                        <td class="text-center table-light">${formattednotificacion2Date}</td>
+                                                                                        <td class="text-center ">${item.respuestaNotificacion2}</td>
+                                                                                        <td class="text-center table-light">${item.correoParte1}<br>${item.correoParte2}</td>
+
+                                                                                        <td class="text-center ">${item.telefono}</td>
+                                                                                        <td class="text-center table-light">${item.counterCliente}</td>
+                                                                                        <td class="text-center  ">${item.conterRGE}</td>
+                                                                                    </tr>
+                                                                                `;
+                tbody.append(row);
+            });
+
+            $('.noresultCotizacionesLog').hide();
+        }
+
+
+
+        function inicial() {
+          
+            $.ajax({
+                type: 'POST',
+                url: '/DASHBOARDSTYLE2/ClienteBusquedaInical',  // Reemplaza con la URL de tu acción en el controlador
+                data: {
+                    selector: true
+
+                },
+                traditional: true,  // Para enviar datos de array en AJAX
+                success: function (response) {
+
+                    if (response.success) {
+                        renderTablaCotizacionesLog(response.dataLog)
+                        renderTablaCotizacionesSemana(response.dataSemana)
+                        renderTablaCotizacionesVencidas(response.dataVencidas)
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error en la solicitud',
+                            text: 'Hubo un problema en el Servidor. Intente nuevamente.',
+                            confirmButtonText: 'Cerrar',
+                        });
+
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error en la solicitud',
+                        text: 'Hubo un problema al procesar la solicitud. Intente nuevamente.',
+                        confirmButtonText: 'Cerrar',
+                    });
+                    console.error('Error en la solicitud:', error);
+                }
+            });
+        }
+
+
+
+
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'size': ['small', false, 'large', 'huge'] }], // Ajusta opciones de tamaño
+                    [{ 'color': [] }], // Agrega una opción de color en la barra de herramientas
+
+                    ['bold', 'italic', 'underline'],
+                    ['link', 'image']
+                ]
+            },
+            formats: {
+                size: '16px' // Tamaño predeterminado
+            }
+        });
+
+        quill.format('color', '#000');
+
+
+
+
+        function enviarLink() {
+            var enviarBtn = document.getElementById("enviarBtn");
+            var originalContent = enviarBtn.innerHTML;
+
+            var mensaje = quill.root.innerHTML;
+            var idCotizacion = $('#idCotizacionMensaje').text();
+            var idCliente = $('#idClienteMensaje').text();
+            var destinatario = document.getElementById("emailSelect").value;
+
+            if (!destinatario || destinatario.trim() === "") {
+                Swal.fire({
+                    title: "Correo requerido",
+                    text: "Por favor, ingresa un correo de destinatario.",
+                    icon: "warning",
+                    confirmButtonText: "Aceptar"
+                });
+                return;
+            }
+
+            if (!mensaje || mensaje.trim() === "<p><br></p>") {
+                Swal.fire({
+                    title: "Mensaje requerido",
+                    text: "Por favor, ingresa un mensaje en el editor.",
+                    icon: "warning",
+                    confirmButtonText: "Aceptar"
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: "¿Enviar correo?",
+                text: "¿Estás seguro de enviar este correo al destinatario?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, enviar Correo ",
+                cancelButtonText: "No enviar Correo"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Puedes personalizar este link como desees
+                    let linkCotizacion = `<p><a href="https://tusitio.com/cotizacion/${idCotizacion}" target="_blank">Ver Cotización</a></p>`;
+                    mensaje += linkCotizacion;
+                }
+
+                enviarBtn.innerHTML = `
+            <span class="d-flex align-items-center">
+                <span class="spinner-border spinner-border-sm flex-shrink-0" role="status">
+                    <span class="visually-hidden">Enviando...</span>
+                </span>
+                <span class="flex-grow-1 ms-2">Enviando...</span>
+            </span>`;
+                enviarBtn.disabled = true;
+
+                $.ajax({
+                    url: '/DASHBOARDSTYLE2/EnviarCorreo',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        correo: destinatario,
+                        mensaje: mensaje,
+                        idCotizacion: idCotizacion
+                    }),
+                    success: function (response) {
+                        if (response.success) {
+                            $('.noHayCorreos').hide();
+                            renderCorreoCotizaciones(response.data);
+                            Swal.fire({
+                                title: "¡Correo Enviado!",
+                                text: "El mensaje se ha enviado correctamente.",
+                                icon: "success",
+                                confirmButtonText: "Aceptar"
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error",
+                                text: response.errorMessage || "Hubo un error al enviar el correo. Inténtalo nuevamente.",
+                                icon: "error",
+                                confirmButtonText: "Aceptar"
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: "Error",
+                            text: "No se pudo contactar con el servidor. Por favor, inténtalo más tarde.",
+                            icon: "error",
+                            confirmButtonText: "Aceptar"
+                        });
+                    },
+                    complete: function () {
+                        enviarBtn.innerHTML = originalContent;
+                        enviarBtn.disabled = false;
+                    }
+                });
+            });
+        }
+
+
+        //function enviarLink() {
+        //    // Obtener el botón y almacenar su contenido original
+        //    var enviarBtn = document.getElementById("enviarBtn");
+        //    var originalContent = enviarBtn.innerHTML;
+
+            
+        //    // Obtener el texto del editor Quill
+        //    var mensaje = quill.root.innerHTML;
+
+        //    // Obtener el idCotizacion y el correo seleccionado
+        //    var idCotizacion = $('#idCotizacionMensaje').text();
+        //    var idCliente = $('#idClienteMensaje').text();
+        //    var destinatario = document.getElementById("emailSelect").value;
+
+        //    // Validar que el correo y el mensaje no estén vacíos
+        //    if (!destinatario || destinatario.trim() === "") {
+        //        Swal.fire({
+        //            title: "Correo requerido",
+        //            text: "Por favor, ingresa un correo de destinatario.",
+        //            icon: "warning",
+        //            confirmButtonText: "Aceptar"
+        //        });
+        //        return;  // Detener la ejecución si falta el correo
+        //    }
+
+        //    if (!mensaje || mensaje.trim() === "<p><br></p>") {
+        //        Swal.fire({
+        //            title: "Mensaje requerido",
+        //            text: "Por favor, ingresa un mensaje en el editor.",
+        //            icon: "warning",
+        //            confirmButtonText: "Aceptar"
+        //        });
+        //        return;  // Detener la ejecución si falta el mensaje
+        //    }
+
+        //    // Cambiar el botón a estado "cargando" con spinner pequeño
+        //    enviarBtn.innerHTML = `
+        //                            <span class="d-flex align-items-center">
+        //                                <span class="spinner-border spinner-border-sm flex-shrink-0" role="status">
+        //                                    <span class="visually-hidden">Enviando...</span>
+        //                                </span>
+        //                                <span class="flex-grow-1 ms-2">Enviando...</span>
+        //                            </span>
+        //                        `;
+        //    //     enviarBtn.classList.add("btn-sm"); // Asegurarse de que el tamaño pequeño esté presente
+        //    enviarBtn.disabled = true;
+
+        //    // Realizar la solicitud AJAX
+        //    $.ajax({
+        //        url: '/DASHBOARDSTYLE2/EnviarCorreo',
+        //        type: 'POST',
+        //        contentType: 'application/json',
+        //        data: JSON.stringify({
+        //            correo: destinatario,
+        //            mensaje: mensaje,
+        //            idCotizacion: idCotizacion
+        //        }),
+        //        success: function (response) {
+        //            if (response.success) {
+
+        //                $('.noHayCorreos').hide(); 
+
+                       
+
+        //                renderCorreoCotizaciones(response.data)
+                      
+        //                Swal.fire({
+        //                    title: "¡Correo Enviado!",
+        //                    text: "El mensaje se ha enviado correctamente.",
+        //                    icon: "success",
+        //                    confirmButtonText: "Aceptar"
+        //                });
+        //            } else {
+        //                Swal.fire({
+        //                    title: "Error",
+        //                    text: response.errorMessage || "Hubo un error al enviar el correo. Inténtalo nuevamente.",
+        //                    icon: "error",
+        //                    confirmButtonText: "Aceptar"
+        //                });
+        //            }
+        //        },
+        //        error: function () {
+        //            Swal.fire({
+        //                title: "Error",
+        //                text: "No se pudo contactar con el servidor. Por favor, inténtalo más tarde.",
+        //                icon: "error",
+        //                confirmButtonText: "Aceptar"
+        //            });
+        //        },
+        //        complete: function () {
+        //            // Restaurar el botón a su estado original
+        //            enviarBtn.innerHTML = originalContent;
+        //            //    enviarBtn.classList.remove("btn-sm"); // Eliminar el tamaño pequeño
+        //            enviarBtn.disabled = false;
+        //        }
+        //    });
+        //}
+
+
+
+
+        function enviarCorreo() {
+            var enviarBtn = document.getElementById("enviarBtn2");
+            var originalContent = enviarBtn.innerHTML;
+
+            var mensaje = quill.root.innerHTML;
+            var idCotizacion = $('#idCotizacionMensaje').text();
+            var idCliente = $('#idClienteMensaje').text();
+            var destinatario = document.getElementById("emailSelect").value;
+
+            // Validación de campos
+            if (!destinatario || destinatario.trim() === "") {
+                Swal.fire({
+                    title: "Correo requerido",
+                    text: "Por favor, ingresa un correo de destinatario.",
+                    icon: "warning",
+                    confirmButtonText: "Aceptar"
+                });
+                return;
+            }
+
+            if (!mensaje || mensaje.trim() === "<p><br></p>") {
+                Swal.fire({
+                    title: "Mensaje requerido",
+                    text: "Por favor, ingresa un mensaje en el editor.",
+                    icon: "warning",
+                    confirmButtonText: "Aceptar"
+                });
+                return;
+            }
+
+            // Confirmación antes de enviar
+            Swal.fire({
+                title: "¿Enviar correo?",
+                text: "¿Estás seguro de enviar este correo al destinatario?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Sí, enviar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    enviarBtn.innerHTML = `
+                <span class="d-flex align-items-center">
+                    <span class="spinner-border spinner-border-sm flex-shrink-0" role="status">
+                        <span class="visually-hidden">Enviando...</span>
+                    </span>
+                    <span class="flex-grow-1 ms-2">Enviando...</span>
+                </span>`;
+                    enviarBtn.disabled = true;
+
+                    $.ajax({
+                        url: '/DASHBOARDSTYLE2/EnviarCorreoDirecto',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            correo: destinatario,
+                            mensaje: mensaje,
+                            idCotizacion: idCotizacion
+                        }),
+                        success: function (response) {
+                            if (response.success) {
+                                $('.noHayCorreos').hide();
+                                renderCorreoCotizaciones(response.data);
+                                Swal.fire({
+                                    title: "¡Correo Enviado!",
+                                    text: "El mensaje se ha enviado correctamente.",
+                                    icon: "success",
+                                    confirmButtonText: "Aceptar"
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Error",
+                                    text: response.errorMessage || "Hubo un error al enviar el correo. Inténtalo nuevamente.",
+                                    icon: "error",
+                                    confirmButtonText: "Aceptar"
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: "Error",
+                                text: "No se pudo contactar con el servidor. Por favor, inténtalo más tarde.",
+                                icon: "error",
+                                confirmButtonText: "Aceptar"
+                            });
+                        },
+                        complete: function () {
+                            enviarBtn.innerHTML = originalContent;
+                            enviarBtn.disabled = false;
+                        }
+                    });
+                }
+            });
+        }
+
+
+        //function enviarCorreo() {
+        //    // Obtener el botón y almacenar su contenido original
+        //    var enviarBtn = document.getElementById("enviarBtn2");
+        //    var originalContent = enviarBtn.innerHTML;
+
+
+        //    // Obtener el texto del editor Quill
+        //    var mensaje = quill.root.innerHTML;
+
+        //    // Obtener el idCotizacion y el correo seleccionado
+        //    var idCotizacion = $('#idCotizacionMensaje').text();
+        //    var idCliente = $('#idClienteMensaje').text();
+        //    var destinatario = document.getElementById("emailSelect").value;
+
+        //    // Validar que el correo y el mensaje no estén vacíos
+        //    if (!destinatario || destinatario.trim() === "") {
+        //        Swal.fire({
+        //            title: "Correo requerido",
+        //            text: "Por favor, ingresa un correo de destinatario.",
+        //            icon: "warning",
+        //            confirmButtonText: "Aceptar"
+        //        });
+        //        return;  // Detener la ejecución si falta el correo
+        //    }
+
+        //    if (!mensaje || mensaje.trim() === "<p><br></p>") {
+        //        Swal.fire({
+        //            title: "Mensaje requerido",
+        //            text: "Por favor, ingresa un mensaje en el editor.",
+        //            icon: "warning",
+        //            confirmButtonText: "Aceptar"
+        //        });
+        //        return;  // Detener la ejecución si falta el mensaje
+        //    }
+
+        //    // Cambiar el botón a estado "cargando" con spinner pequeño
+        //    enviarBtn.innerHTML = `
+        //                            <span class="d-flex align-items-center">
+        //                                <span class="spinner-border spinner-border-sm flex-shrink-0" role="status">
+        //                                    <span class="visually-hidden">Enviando...</span>
+        //                                </span>
+        //                                <span class="flex-grow-1 ms-2">Enviando...</span>
+        //                            </span>
+        //                        `;
+        //    //     enviarBtn.classList.add("btn-sm"); // Asegurarse de que el tamaño pequeño esté presente
+        //    enviarBtn.disabled = true;
+
+        //    // Realizar la solicitud AJAX
+        //    $.ajax({
+        //        url: '/DASHBOARDSTYLE2/EnviarCorreoDirecto',
+        //        type: 'POST',
+        //        contentType: 'application/json',
+        //        data: JSON.stringify({
+        //            correo: destinatario,
+        //            mensaje: mensaje,
+        //            idCotizacion: idCotizacion
+        //        }),
+        //        success: function (response) {
+        //            if (response.success) {
+
+        //                $('.noHayCorreos').hide();
+
+
+
+        //                renderCorreoCotizaciones(response.data)
+
+        //                Swal.fire({
+        //                    title: "¡Correo Enviado!",
+        //                    text: "El mensaje se ha enviado correctamente.",
+        //                    icon: "success",
+        //                    confirmButtonText: "Aceptar"
+        //                });
+        //            } else {
+        //                Swal.fire({
+        //                    title: "Error",
+        //                    text: response.errorMessage || "Hubo un error al enviar el correo. Inténtalo nuevamente.",
+        //                    icon: "error",
+        //                    confirmButtonText: "Aceptar"
+        //                });
+        //            }
+        //        },
+        //        error: function () {
+        //            Swal.fire({
+        //                title: "Error",
+        //                text: "No se pudo contactar con el servidor. Por favor, inténtalo más tarde.",
+        //                icon: "error",
+        //                confirmButtonText: "Aceptar"
+        //            });
+        //        },
+        //        complete: function () {
+        //            // Restaurar el botón a su estado original
+        //            enviarBtn.innerHTML = originalContent;
+        //            //    enviarBtn.classList.remove("btn-sm"); // Eliminar el tamaño pequeño
+        //            enviarBtn.disabled = false;
+        //        }
+        //    });
+        //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+       
+        function renderCorreoCotizaciones(jsonCorreos) {
+
+            var correos = JSON.parse(jsonCorreos)
+            document.querySelector('.correosGuardados').innerHTML = '';
+
+            // Iterar sobre los correos y renderizarlos
+            correos.forEach((correo, index) => {
+                const contenidoMensaje = correo.mensaje.map(linea => `<p>${linea}</p>`).join("");
+                const correoHTML = `
+    <section class="accordion-item right">
+        <div class="accordion-header">
+            <a role="button" class="btn w-100 text-start px-0 bg-transparent shadow-none collapsed" 
+               data-bs-toggle="collapse" href="#correo-collapse${index}" aria-expanded="true" 
+               aria-controls="correo-collapse${index}">
+                <div class="d-flex align-items-center text-muted">
+                    <div class="flex-shrink-0 avatar-xs me-3">
+                        <img src="${correo.avatarRemitente}" alt="" class="img-fluid rounded-circle">
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <h5 class="fs-14 text-truncate email-user-name-right mb-0">${correo.nombreRemitente}</h5>
+                        <div class="text-truncate fs-12">para: ${correo.emailDestinatario}</div>
+                    </div>
+                    <div class="flex-shrink-0 align-self-start">
+                        <div class="text-muted fs-12">${correo.fecha}</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div id="correo-collapse${index}" class="accordion-collapse collapse">
+            <article class="accordion-body text-body px-0">
+                ${contenidoMensaje}
+            </article>
+        </div>
+    </section>
+`;
+                // Insertar el HTML en el contenedor con clase correosGuardados
+                document.querySelector('.correosGuardados').innerHTML += correoHTML;
+            });
+        }
+
+
+
+    </script>
+
+
+}
